@@ -1,4 +1,4 @@
-TARGET=a.out
+TARGET=../game.out
 CXX=g++
 DEBUG=-g
 OPT=-O0

@@ -20,7 +20,7 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
 
     frame = 0.f;
     gameTime = 0.0f;
-    movimentSpeed = 300.f;
+    movimentSpeed = 200.f;
     dx = 0;
     dy = 0;
     attackDistance = 50;
@@ -31,7 +31,7 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
 
     this->groundPosition = groundLocalization - sprite.getGlobalBounds().height;
     // sprite.setTextureRect(IntRect(0, groundPosition, ENEMY_SPRITE_WIDHT, ENEMY_SPRITE_HEIGHT));
-    setPosition(Vector2f(0.f, groundPosition));
+    setPosition(Vector2f(window->getSize().x, groundPosition));
 
 
 }

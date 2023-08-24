@@ -29,7 +29,7 @@ Player::Player(RenderWindow* renderWindow, int groundLocalization) {
 
     this->groundPosition = groundLocalization - sprite.getGlobalBounds().height;
     // sprite.setTextureRect(IntRect(0, groundPosition, PLAYER_SPRITE_WIDHT, PLAYER_SPRITE_HEIGHT));
-    setPosition(Vector2f((window->getSize().x - sprite.getGlobalBounds().width - 50) / 2 , groundPosition));
+    setPosition(Vector2f((window->getSize().x/2) - sprite.getGlobalBounds().width - 50 , groundPosition));
 
 
 }
