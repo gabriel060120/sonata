@@ -1,55 +1,57 @@
-#include "player.hpp"
+#include "enemy.hpp"
 #include <SFML/Graphics.hpp>
 #include <memory>
 
 using namespace sf;
 
-// const String PLAYER_TEXTURE = "./assets/sprites/player/idle.png";
-const int PLAYER_SPRITE_WIDHT = 50;
-const int PLAYER_SPRITE_HEIGHT = 37;
+// const String ENEMY_TEXTURE = "./assets/sprites/Enemy/idle.png";
+const int ENEMY_SPRITE_WIDHT = 50;
+const int ENEMY_SPRITE_HEIGHT = 37;
 const float FRAME_VELOCITY = 5;
 
-Player::Player(RenderWindow* renderWindow, int groundLocalization) {
-    window = renderWindow;
-    // texture.loadFromFile(PLAYER_TEXTURE);
+Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player) {
+    this->window = renderWindow;
+    this->player = player;
+    // texture.loadFromFile(ENEMY_TEXTURE);
     // sprite.setTexture(texture);
     // sprite.setTexture(texture);
     sprite.setSize(Vector2f(100.f, 100.f));
-    sprite.setFillColor(Color::White);
+    sprite.setFillColor(Color::Blue);
 
     frame = 0.f;
     gameTime = 0.0f;
     movimentSpeed = 300.f;
     dx = 0;
     dy = 0;
+    attackDistance = 50;
     onGround = true;
     inMoviment = false;
     inJump = false;
     inFall = false;
 
     this->groundPosition = groundLocalization - sprite.getGlobalBounds().height;
-    // sprite.setTextureRect(IntRect(0, groundPosition, PLAYER_SPRITE_WIDHT, PLAYER_SPRITE_HEIGHT));
-    setPosition(Vector2f((window->getSize().x - sprite.getGlobalBounds().width - 50) / 2 , groundPosition));
+    // sprite.setTextureRect(IntRect(0, groundPosition, ENEMY_SPRITE_WIDHT, ENEMY_SPRITE_HEIGHT));
+    setPosition(Vector2f(0.f, groundPosition));
 
 
 }
 
-void Player::updateGameTime(float clock) {
+void Enemy::updateGameTime(float clock) {
     gameTime = clock;
 }
 
-void Player::setPosition(Vector2f position) {
+void Enemy::setPosition(Vector2f position) {
     sprite.setPosition(position);
 }
 
-void Player::render() {
+void Enemy::render() {
     window->draw(sprite);
 }
 
-void Player::moviment() {
+void Enemy::moviment() {
     inMoviment = true;
 
-    if(Keyboard::isKeyPressed(Keyboard::Right)) {
+    if((player->sprite.getPosition().x - attackDistance) > (sprite.getPosition().x + sprite.getGlobalBounds().width)) {
         dx = movimentSpeed;
         // sprite.move(movimentSpeed * gameTime, 0.f);
         
@@ -57,15 +59,15 @@ void Player::moviment() {
         if(frame > 3) {
             frame -= 3;
         }
-        // sprite.setTextureRect(IntRect(PLAYER_SPRITE_WIDHT * (int) frame, 0, PLAYER_SPRITE_WIDHT,PLAYER_SPRITE_HEIGHT));
-    } else if(Keyboard::isKeyPressed(Keyboard::Left)) {
+        // sprite.setTextureRect(IntRect(ENEMY_SPRITE_WIDHT * (int) frame, 0, ENEMY_SPRITE_WIDHT,ENEMY_SPRITE_HEIGHT));
+    } else if((player->sprite.getPosition().x + attackDistance + player->sprite.getGlobalBounds().width) < sprite.getPosition().x) {
         dx = -movimentSpeed;
         // sprite.move(-movimentSpeed * gameTime, 0.f);
         frame += FRAME_VELOCITY * gameTime;
         if(frame > 3) {
             frame -= 3;
         }
-        // sprite.setTextureRect(IntRect(PLAYER_SPRITE_WIDHT * (int) frame + PLAYER_SPRITE_WIDHT, 0, -PLAYER_SPRITE_WIDHT,PLAYER_SPRITE_HEIGHT));
+        // sprite.setTextureRect(IntRect(ENEMY_SPRITE_WIDHT * (int) frame + ENEMY_SPRITE_WIDHT, 0, -ENEMY_SPRITE_WIDHT,ENEMY_SPRITE_HEIGHT));
     } else {
         dx = 0;
         inMoviment = false;
@@ -75,7 +77,7 @@ void Player::moviment() {
     sprite.move(dx * gameTime, 0.f);
 }
 
-void Player::idle() {
+void Enemy::idle() {
     inMoviment = true;
     int movimentControl = 1;
 
@@ -85,13 +87,13 @@ void Player::idle() {
         if(frame > 3) {
             frame -= 3;
         }
-        // sprite.setTextureRect(IntRect(PLAYER_SPRITE_WIDHT * (int) frame, 0, PLAYER_SPRITE_WIDHT,PLAYER_SPRITE_HEIGHT));
+        // sprite.setTextureRect(IntRect(ENEMY_SPRITE_WIDHT * (int) frame, 0, ENEMY_SPRITE_WIDHT,ENEMY_SPRITE_HEIGHT));
     } else  {
         frame += FRAME_VELOCITY * gameTime;
         if(frame > 3) {
             frame -= 3;
         }
-        // sprite.setTextureRect(IntRect(PLAYER_SPRITE_WIDHT * (int) frame + PLAYER_SPRITE_WIDHT, 0, -PLAYER_SPRITE_WIDHT,PLAYER_SPRITE_HEIGHT));
+        // sprite.setTextureRect(IntRect(ENEMY_SPRITE_WIDHT * (int) frame + ENEMY_SPRITE_WIDHT, 0, -ENEMY_SPRITE_WIDHT,ENEMY_SPRITE_HEIGHT));
     }
 
     if(!inMoviment) {
@@ -101,7 +103,7 @@ void Player::idle() {
     sprite.move(dx * gameTime * movimentControl, 0.f);
 }
 
-void Player::update() {
+void Enemy::update() {
     moviment();
     idle();
 }

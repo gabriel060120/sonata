@@ -1,19 +1,20 @@
 #pragma once
-#define PLAYER_H
-#include<SFML/Graphics.hpp>
-#include <memory>
-
+#define ENEMY_H
+#include <SFML/Graphics.hpp>
+#include "player.hpp"
 using namespace sf;
 
-class Player {
+class Enemy{
     private:
         RenderWindow* window;
         Texture texture;
+        Player * player;
 
         float frame;
         float gameTime;
         float movimentSpeed;
         float dx, dy;
+        int attackDistance;
 
         bool onGround;
         bool inMoviment;
@@ -23,13 +24,11 @@ class Player {
 
         int groundPosition;
         FloatRect rect;
-        
-
     public:
         // Sprite sprite;
         RectangleShape sprite;
 
-        Player(RenderWindow* renderWindow, int groundLocalization);
+        Enemy(RenderWindow* renderWindow, int groundLocalization, Player * player);
 
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock);
