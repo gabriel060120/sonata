@@ -37,7 +37,6 @@ int main() {
         timeClock = gameClock.getElapsedTime().asSeconds();
         gameClock.restart();
         player.updateGameTime(timeClock);
-        enemy.updateGameTime(timeClock);
 
         sf::Event event;
         while(window->pollEvent(event))
@@ -49,7 +48,7 @@ int main() {
         }
         
         player.update();
-        enemy.update();
+        enemy.update(timeClock);
 
         window->clear();
         // window->draw(backgroundSprite);

@@ -17,17 +17,24 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
     // sprite.setTexture(texture);
     sprite.setSize(Vector2f(100.f, 100.f));
     sprite.setFillColor(Color::Blue);
-
     frame = 0.f;
-    gameTime = 0.0f;
+    //timers
+    gameClock = 0.0f;
     movimentSpeed = 200.f;
     dx = 0;
     dy = 0;
     attackDistance = 50;
-    onGround = true;
+
+    //action timers
+    timePreparingAttack = 1.f;
+    timeAttack = 1.f;
+    timerAction = 0.f;
+    //action controllers
     inMoviment = false;
-    inJump = false;
-    inFall = false;
+    inTakingDamage = false;
+    inPreparingAttack = false;
+    inAttacking = false;
+    changeAction = false;
 
     this->groundPosition = groundLocalization - sprite.getGlobalBounds().height;
     // sprite.setTextureRect(IntRect(0, groundPosition, ENEMY_SPRITE_WIDHT, ENEMY_SPRITE_HEIGHT));
@@ -37,7 +44,7 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
 }
 
 void Enemy::updateGameTime(float clock) {
-    gameTime = clock;
+    gameClock = clock;
 }
 
 void Enemy::setPosition(Vector2f position) {
@@ -48,33 +55,19 @@ void Enemy::render() {
     window->draw(sprite);
 }
 
-void Enemy::moviment() {
-    inMoviment = true;
 
-    if((player->sprite.getPosition().x - attackDistance) > (sprite.getPosition().x + sprite.getGlobalBounds().width)) {
-        dx = movimentSpeed;
-        // sprite.move(movimentSpeed * gameTime, 0.f);
-        
-        frame += FRAME_VELOCITY * gameTime;
-        if(frame > 3) {
-            frame -= 3;
-        }
-        // sprite.setTextureRect(IntRect(ENEMY_SPRITE_WIDHT * (int) frame, 0, ENEMY_SPRITE_WIDHT,ENEMY_SPRITE_HEIGHT));
-    } else if((player->sprite.getPosition().x + attackDistance + player->sprite.getGlobalBounds().width) < sprite.getPosition().x) {
-        dx = -movimentSpeed;
-        // sprite.move(-movimentSpeed * gameTime, 0.f);
-        frame += FRAME_VELOCITY * gameTime;
-        if(frame > 3) {
-            frame -= 3;
-        }
-        // sprite.setTextureRect(IntRect(ENEMY_SPRITE_WIDHT * (int) frame + ENEMY_SPRITE_WIDHT, 0, -ENEMY_SPRITE_WIDHT,ENEMY_SPRITE_HEIGHT));
+void Enemy::update(float clock) {
+    updateGameTime(clock);
+
+    if(inMoviment) {
+        moviment();
+    } else if(inPreparingAttack) {
+        preparingAttack();
+    } else if(inAttacking) {
+        attack();
     } else {
-        dx = 0;
-        inMoviment = false;
+        idle();
     }
-
-    
-    sprite.move(dx * gameTime, 0.f);
 }
 
 void Enemy::idle() {
@@ -83,13 +76,13 @@ void Enemy::idle() {
 
     if(dx >= 0) {
         
-        frame += FRAME_VELOCITY * gameTime;
+        frame += FRAME_VELOCITY * gameClock;
         if(frame > 3) {
             frame -= 3;
         }
         // sprite.setTextureRect(IntRect(ENEMY_SPRITE_WIDHT * (int) frame, 0, ENEMY_SPRITE_WIDHT,ENEMY_SPRITE_HEIGHT));
     } else  {
-        frame += FRAME_VELOCITY * gameTime;
+        frame += FRAME_VELOCITY * gameClock;
         if(frame > 3) {
             frame -= 3;
         }
@@ -100,10 +93,38 @@ void Enemy::idle() {
         movimentControl = 0;
     }
     
-    sprite.move(dx * gameTime * movimentControl, 0.f);
+    sprite.move(dx * gameClock * movimentControl, 0.f);
 }
 
-void Enemy::update() {
-    moviment();
-    idle();
+void Enemy::attack() {}
+void Enemy::preparingAttack() {
+    timerAction += gameClock;
+}
+
+void Enemy::moviment() {
+    inMoviment = true;
+
+    if((player->sprite.getPosition().x - attackDistance) > (sprite.getPosition().x + sprite.getGlobalBounds().width)) {
+        dx = movimentSpeed;
+        // sprite.move(movimentSpeed * gameClock, 0.f);
+        
+        frame += FRAME_VELOCITY * gameClock;
+        if(frame > 3) {
+            frame -= 3;
+        }
+        // sprite.setTextureRect(IntRect(ENEMY_SPRITE_WIDHT * (int) frame, 0, ENEMY_SPRITE_WIDHT,ENEMY_SPRITE_HEIGHT));
+    } else if((player->sprite.getPosition().x + attackDistance + player->sprite.getGlobalBounds().width) < sprite.getPosition().x) {
+        dx = -movimentSpeed;
+        // sprite.move(-movimentSpeed * gameClock, 0.f);
+        frame += FRAME_VELOCITY * gameClock;
+        if(frame > 3) {
+            frame -= 3;
+        }
+        // sprite.setTextureRect(IntRect(ENEMY_SPRITE_WIDHT * (int) frame + ENEMY_SPRITE_WIDHT, 0, -ENEMY_SPRITE_WIDHT,ENEMY_SPRITE_HEIGHT));
+    } else {
+        dx = 0;
+        inMoviment = false;
+    }
+
+    sprite.move(dx * gameClock, 0.f);
 }
