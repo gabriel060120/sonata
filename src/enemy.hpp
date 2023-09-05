@@ -25,11 +25,19 @@ class Enemy{
         float timerAction;
 
         // actions control
+        bool allowedAction;
         bool changeAction;
+        bool inIdle;
         bool inMoviment;
         bool inPreparingAttack;
         bool inAttacking;
         bool inTakingDamage;
+        bool toIdle;
+        bool toPreparingAttack;
+        bool toAttack;
+        bool toTakingDamage;
+        bool stateChanged;
+        int state;
 
         int groundPosition;
         FloatRect rect;
@@ -40,8 +48,8 @@ class Enemy{
         Enemy(RenderWindow* renderWindow, int groundLocalization, Player * player);
 
         void setPosition(sf::Vector2f position);
-        void updateGameTime(float clock);
-        void update(float clock);
+        void updateGameTime(float clock, bool allowedAction);
+        void update(float clock, bool allowedAction);
         
         //actions
         void idle();

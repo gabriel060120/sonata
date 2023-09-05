@@ -6,7 +6,7 @@ WARN=-Wall
 SFML=-lsfml-graphics -lsfml-window -lsfml-system
 CXXFLAGS=$(DEBUG) $(OPT) $(WARN) $(SFML)
 LD=g++
-OBJS= main.o player.o enemy.o
+OBJS= main.o player.o enemy.o life_bar.o
 all: $(OBJS)
 	$(LD) -o $(TARGET) $(OBJS) $(CXXFLAGS)
 	@rm *.o
@@ -17,3 +17,5 @@ player.o: player.cpp
 	$(CXX) -c $(CXXFLAGS) player.cpp -o player.o
 enemy.o: enemy.cpp
 	$(CXX) -c $(CXXFLAGS) enemy.cpp -o enemy.o
+life_bar.o: life_bar.cpp
+	$(CXX) -c $(CXXFLAGS) life_bar.cpp -o life_bar.o

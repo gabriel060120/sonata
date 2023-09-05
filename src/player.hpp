@@ -2,6 +2,7 @@
 #define PLAYER_H
 #include<SFML/Graphics.hpp>
 #include <memory>
+#include "life_bar.hpp"
 
 using namespace sf;
 
@@ -23,7 +24,8 @@ class Player {
 
         int groundPosition;
         FloatRect rect;
-        
+
+        std::unique_ptr<LifeBar> lifeBar; 
 
     public:
         // Sprite sprite;
@@ -34,8 +36,11 @@ class Player {
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock);
         void update();
+        //actions
         void block();
         void moviment();
         void idle();
         void render();
+        //reactions
+        void takeDamage(int valueDamage);
 };

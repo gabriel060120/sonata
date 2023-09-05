@@ -14,7 +14,10 @@ int main() {
 
     const float heightFloor = 100.f;
     float timeClock = 0.f;
+    float actionInterval = 1.f;
+    float timerToAction = 0.f;
     Clock gameClock;
+    bool allowedAction = false;
 
     int groundLocalization = window->getSize().y - heightFloor;
 
@@ -37,7 +40,15 @@ int main() {
         timeClock = gameClock.getElapsedTime().asSeconds();
         gameClock.restart();
         player.updateGameTime(timeClock);
-
+        timerToAction += timeClock;
+        
+        if(timerToAction >= actionInterval) {
+            allowedAction = true;
+            timerToAction = 0.f;
+            cout << allowedAction << endl;
+        } else {
+            allowedAction = false;
+        }
         sf::Event event;
         while(window->pollEvent(event))
         {
@@ -48,7 +59,7 @@ int main() {
         }
         
         player.update();
-        enemy.update(timeClock);
+        enemy.update(timeClock, allowedAction);
 
         window->clear();
         // window->draw(backgroundSprite);

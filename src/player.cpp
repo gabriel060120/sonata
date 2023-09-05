@@ -17,6 +17,8 @@ Player::Player(RenderWindow* renderWindow, int groundLocalization) {
     sprite.setSize(Vector2f(100.f, 100.f));
     sprite.setFillColor(Color::White);
 
+    lifeBar = std::make_unique<LifeBar>(window, Vector2f(60.f, 30.f), 5, Vector2f(30, 50), Color::Green, Color(128,128,128));
+
     frame = 0.f;
     gameTime = 0.0f;
     movimentSpeed = 300.f;
@@ -31,7 +33,6 @@ Player::Player(RenderWindow* renderWindow, int groundLocalization) {
     // sprite.setTextureRect(IntRect(0, groundPosition, PLAYER_SPRITE_WIDHT, PLAYER_SPRITE_HEIGHT));
     setPosition(Vector2f((window->getSize().x/2) - sprite.getGlobalBounds().width - 50 , groundPosition));
 
-
 }
 
 void Player::updateGameTime(float clock) {
@@ -44,6 +45,7 @@ void Player::setPosition(Vector2f position) {
 
 void Player::render() {
     window->draw(sprite);
+    lifeBar->render();
 }
 
 void Player::moviment() {
@@ -104,4 +106,11 @@ void Player::idle() {
 void Player::update() {
     moviment();
     idle();
+}
+//=================================================================================================================================
+//----------------------------------------------------- reactions -----------------------------------------------------------------
+//=================================================================================================================================
+
+void Player::takeDamage(int valueDamage) {
+    lifeBar->takeDamage(valueDamage);
 }
