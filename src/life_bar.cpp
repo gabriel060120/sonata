@@ -16,11 +16,19 @@ LifeBar::LifeBar(RenderWindow* renderWindow, Vector2f size, int max, Vector2f po
     this->lostLifeColor = lostLifeColor;    
 }
 
+void LifeBar::setPosition(Vector2f position) {
+    this->position = position;
+}
+
 void LifeBar::takeDamage(int valueDamage) {
     life -= valueDamage;
     if(life < 0) {
         life = 0;
     }
+}
+
+int LifeBar::getLife() {
+    return life;
 }
 
 void LifeBar::render() {

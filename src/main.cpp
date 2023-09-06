@@ -39,7 +39,6 @@ int main() {
     {
         timeClock = gameClock.getElapsedTime().asSeconds();
         gameClock.restart();
-        player.updateGameTime(timeClock);
         timerToAction += timeClock;
         
         if(timerToAction >= actionInterval) {
@@ -58,14 +57,16 @@ int main() {
             }
         }
         
-        player.update();
-        enemy.update(timeClock, allowedAction);
+        player.update(timeClock);
+        if(enemy.getLife() > 0)
+            enemy.update(timeClock, allowedAction);
 
         window->clear();
         // window->draw(backgroundSprite);
         window->draw(floor);
+        if(enemy.getLife() > 0)
+            enemy.render();
         player.render();
-        enemy.render();
         window->display();
     }
 

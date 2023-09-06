@@ -25,6 +25,7 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
     dx = 0;
     dy = 0;
     attackDistance = 50;
+    lifeBar = std::make_unique<LifeBar>(window, Vector2f(20.f, 10.f), 5, Vector2f(sprite.getPosition().x, sprite.getPosition().y - 30), Color::Red, Color(128,128,128));
 
     //action timers
     timePreparingAttack = 1.f;
@@ -60,14 +61,18 @@ void Enemy::updateGameTime(float clock, bool allowedAction) {
 
 void Enemy::setPosition(Vector2f position) {
     sprite.setPosition(position);
+    lifeBar->setPosition(Vector2f(position.x, position.y - 20));
 }
 
 void Enemy::render() {
     window->draw(sprite);
+    lifeBar->render();
 }
 
 void Enemy::update(float clock, bool allowedAction) {
     updateGameTime(clock, allowedAction);
+    
+    takeDamage();
 
     if(inMoviment) {
         moviment(); 
@@ -95,6 +100,10 @@ void Enemy::update(float clock, bool allowedAction) {
         break;
     }    
 }
+
+//=================================================================================================================================
+//||---------------------------------------------------- actions ----------------------------------------------------------------||
+//=================================================================================================================================
 
 void Enemy::moviment() {
     inMoviment = true;
@@ -124,6 +133,7 @@ void Enemy::moviment() {
     }
 
     sprite.move(dx * gameClock, 0.f);
+    lifeBar->setPosition(Vector2f(sprite.getPosition().x, sprite.getPosition().y - 20));
 }
 
 void Enemy::preparingAttack() {
@@ -172,4 +182,26 @@ void Enemy::idle() {
         // toIdle = false;
         // inIdle = false;
     // }
+}
+
+//=================================================================================================================================
+//||--------------------------------------------------- reactions ---------------------------------------------------------------||
+//=================================================================================================================================
+
+void Enemy::takeDamage() {
+    if(sprite.getGlobalBounds().intersects(player->getAttackBox().getGlobalBounds()) && !inTakingDamage && player->inAttacking()) {
+        inTakingDamage = true;
+        lifeBar->takeDamage(1);
+        std::cout << "Inimigo: recebeu dano" << std::endl;
+    } else {
+        inTakingDamage = false;
+    }
+}
+
+//=================================================================================================================================
+//||---------------------------------------------------- getters ----------------------------------------------------------------||
+//=================================================================================================================================
+
+int Enemy::getLife() {
+    return lifeBar->getLife();
 }

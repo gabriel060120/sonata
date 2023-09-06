@@ -2,6 +2,7 @@
 #define ENEMY_H
 #include <SFML/Graphics.hpp>
 #include "player.hpp"
+#include "life_bar.hpp"
 using namespace sf;
 
 class Enemy{
@@ -9,6 +10,7 @@ class Enemy{
         RenderWindow* window;
         Texture texture;
         Player * player;
+        std::unique_ptr<LifeBar> lifeBar;
 
         //game timers
         float frame;
@@ -56,7 +58,10 @@ class Enemy{
         void moviment();
         void preparingAttack();
         void attack();
-
+        //reactions
+        void takeDamage();
+        //getters
+        int getLife();
         //render object
         void render();
 };

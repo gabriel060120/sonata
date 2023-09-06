@@ -15,12 +15,13 @@ class Player {
         float gameTime;
         float movimentSpeed;
         float dx, dy;
-
-        bool onGround;
-        bool inMoviment;
-        bool inJump;
-        bool inFall;
-
+        float timerActionTransition;
+        float actiontransitionTime;
+        //action
+        int actionIndex;
+        RectangleShape attackBox;
+        bool attackingAction;
+        bool blockingAction;
 
         int groundPosition;
         FloatRect rect;
@@ -35,12 +36,19 @@ class Player {
 
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock);
-        void update();
+        void update(float clock);
         //actions
+        void actions();
         void block();
+        void attack();
         void moviment();
         void idle();
-        void render();
+        //getters
+        RectangleShape getAttackBox();
+        bool inAttacking();
+        bool inBlocking();
         //reactions
         void takeDamage(int valueDamage);
+
+        void render();
 };
