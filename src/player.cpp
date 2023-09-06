@@ -56,7 +56,8 @@ void Player::setPosition(Vector2f position) {
 
 void Player::render() {
     window->draw(sprite);
-    window->draw(attackBox);
+    if(actionIndex == 2)
+        window->draw(attackBox);
     lifeBar->render();
 }
 
