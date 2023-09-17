@@ -44,7 +44,7 @@ int main() {
         if(timerToAction >= actionInterval) {
             allowedAction = true;
             timerToAction = 0.f;
-            cout << allowedAction << endl;
+            cout << "\x1B[0m>> Gatilho <<" << endl;
         } else {
             allowedAction = false;
         }
@@ -57,10 +57,9 @@ int main() {
             }
         }
         
-        player.update(timeClock);
+        player.update(timeClock, allowedAction);
         if(enemy.getLife() > 0)
             enemy.update(timeClock, allowedAction);
-
         window->clear();
         // window->draw(backgroundSprite);
         window->draw(floor);

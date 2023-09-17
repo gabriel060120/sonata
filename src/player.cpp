@@ -1,6 +1,7 @@
 #include "player.hpp"
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include <iostream>
 
 using namespace sf;
 
@@ -40,14 +41,17 @@ Player::Player(RenderWindow* renderWindow, int groundLocalization) {
     actionIndex = 0;
     timerActionTransition = 0.f;
     actiontransitionTime = 0.25;
-    attackingAction =false;
-    blockingAction =false;
-
+    attackingAction = false;
+    blockingAction = false;
+    longSleepingAction = false;
+    shortSleepingAction = false;
+    hitTrigger = false;
 
 }
 
-void Player::updateGameTime(float clock) {
+void Player::updateGameTime(float clock, bool triggerAction) {
     gameTime = clock;
+    this->triggerAction = triggerAction;
 }
 
 void Player::setPosition(Vector2f position) {
@@ -61,8 +65,9 @@ void Player::render() {
     lifeBar->render();
 }
 
-void Player::update(float clock) {
-    updateGameTime(clock);
+void Player::update(float clock, bool triggerAction) {
+    updateGameTime(clock, triggerAction);
+
     actions();
 }
 
@@ -75,13 +80,33 @@ void Player::actions() {
         attackingAction = false;
         blockingAction = false;
     }
+    if(actionIndex == 2 || actionIndex == 1) {
+        if(triggerAction) {
+            hitTrigger = true;
+        }
+    }
     if(timerActionTransition >= actiontransitionTime) {
         timerActionTransition = 0;
+        if(actionIndex == 1 || actionIndex == 2) {
+            switch (hitTrigger) {
+                case true:
+                    shortSleepingAction = true;
+                    longSleepingAction = false;
+                case false:
+                    shortSleepingAction = false;
+                    longSleepingAction = true;
+
+            } 
+        }
     }
     if(timerActionTransition == 0) {
-        if(Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D)) {
+        if(shortSleepingAction) {
+            shortSleep();
+        }else if(longSleepingAction) {
+            longSleep();
+        }else if((Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))) {
             attack();
-        } else if(Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A)) {
+        } else if((Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))) {
             block();
         } else {
             idle();
@@ -91,20 +116,53 @@ void Player::actions() {
 
 void Player::idle() {
     actionIndex = 0;
+    actiontransitionTime = 0.25;
     if(sprite.getFillColor() != Color::White)
         sprite.setFillColor(Color::White);
 }
 void Player::block() {
+    std::cout << "\x1B[32mPlayer: bloqueando" << std::endl; 
     actionIndex = 1;
+    actiontransitionTime = 0.25;
     blockingAction = true;
-    if(sprite.getFillColor() != Color::Blue)
+    if(sprite.getFillColor() != Color::Blue) {
         sprite.setFillColor(Color::Blue);
+        // longSleepingAction = true;
+    }
+    if(triggerAction) {
+        // longSleepingAction = false;
+    }
 }
 void Player::attack() {
     actionIndex = 2;
+    actiontransitionTime = 0.25;
     attackingAction = true;
-    if(sprite.getFillColor() != Color::Red)
+
+    if(sprite.getFillColor() != Color::Red) {
         sprite.setFillColor(Color::Red);
+        // longSleepingAction = true;
+    }
+    if(triggerAction) {
+        // longSleepingAction = false;
+    }
+}
+
+void Player::longSleep() {
+    std::cout << "\x1B[32mPlayer: pausa longa" << std::endl; 
+    actiontransitionTime = 0.5;
+    actionIndex = 3;
+    longSleepingAction = false;
+    if(sprite.getFillColor() != Color(238,130,238)) 
+        sprite.setFillColor(Color(238,130,238));
+}
+
+void Player::shortSleep() {
+    std::cout << "\x1B[32mPlayer: pausa curta" << std::endl; 
+    actiontransitionTime = 0.15;
+    actionIndex = 4;
+    shortSleepingAction = false;
+    if(sprite.getFillColor() != Color(123,104,238)) 
+        sprite.setFillColor(Color(123,104,238));
 }
 
 // void Player::moviment() {
@@ -156,7 +214,7 @@ RectangleShape Player::getAttackBox() {
 
 bool Player::inAttacking() {
     return attackingAction;
-};
+}
 bool Player::inBlocking() {
     return actionIndex == 1;
-};
+}

@@ -55,7 +55,7 @@ void Enemy::updateGameTime(float clock, bool allowedAction) {
     this->gameClock = clock;
     this->allowedAction = allowedAction;
     if(allowedAction)
-        std::cout <<"Inimigo: acao habilitada" << std::endl;
+        std::cout <<"\x1B[31mInimigo: acao habilitada" << std::endl;
 
 }
 
@@ -140,7 +140,7 @@ void Enemy::preparingAttack() {
     timerAction += gameClock;
 
     if(allowedAction){
-        std::cout <<"Inimigo: preparando ataque" << std::endl;
+        std::cout <<"\x1B[31mInimigo: preparando ataque" << std::endl;
         inPreparingAttack = true;
         stateChanged = true;
         sprite.setFillColor(Color(255,165,0));
@@ -155,7 +155,7 @@ void Enemy::preparingAttack() {
 
 void Enemy::attack() {
     if(allowedAction){
-        std::cout <<"Inimigo: atacando" << std::endl;
+        std::cout <<"\x1B[31mInimigo: atacando" << std::endl;
         inAttacking = true;
         stateChanged = true;
         sprite.setFillColor(Color::Red);
@@ -172,7 +172,7 @@ void Enemy::attack() {
 void Enemy::idle() {
     if(allowedAction){
         sprite.setFillColor(Color(128,128,128));
-        std::cout <<"Inimigo: parado" << std::endl;
+        std::cout <<"\x1B[31mInimigo: parado" << std::endl;
         inIdle = true;
         stateChanged = true;
     } 
@@ -192,7 +192,7 @@ void Enemy::takeDamage() {
     if(sprite.getGlobalBounds().intersects(player->getAttackBox().getGlobalBounds()) && !inTakingDamage && player->inAttacking()) {
         inTakingDamage = true;
         lifeBar->takeDamage(1);
-        std::cout << "Inimigo: recebeu dano" << std::endl;
+        std::cout << "\x1B[31mInimigo: recebeu dano" << std::endl;
     } else {
         inTakingDamage = false;
     }

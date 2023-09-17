@@ -10,18 +10,22 @@ class Player {
     private:
         RenderWindow* window;
         Texture texture;
-
+        //game
         float frame;
         float gameTime;
+        bool triggerAction;
+        //action        
         float movimentSpeed;
         float dx, dy;
         float timerActionTransition;
         float actiontransitionTime;
-        //action
         int actionIndex;
+        bool hitTrigger;
         RectangleShape attackBox;
         bool attackingAction;
         bool blockingAction;
+        bool longSleepingAction;
+        bool shortSleepingAction;
 
         int groundPosition;
         FloatRect rect;
@@ -35,14 +39,16 @@ class Player {
         Player(RenderWindow* renderWindow, int groundLocalization);
 
         void setPosition(sf::Vector2f position);
-        void updateGameTime(float clock);
-        void update(float clock);
+        void updateGameTime(float clock, bool triggerAction);
+        void update(float clock, bool triggerAction);
         //actions
         void actions();
         void block();
         void attack();
         void moviment();
         void idle();
+        void longSleep();
+        void shortSleep();
         //getters
         RectangleShape getAttackBox();
         bool inAttacking();
