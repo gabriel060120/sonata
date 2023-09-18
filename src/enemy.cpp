@@ -54,8 +54,8 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
 void Enemy::updateGameTime(float clock, bool allowedAction) {
     this->gameClock = clock;
     this->allowedAction = allowedAction;
-    if(allowedAction)
-        std::cout <<"\x1B[31mInimigo: acao habilitada" << std::endl;
+    //  if(allowedAction)
+        // std::cout <<"\x1B[31mInimigo: acao habilitada" << std::endl;
 
 }
 

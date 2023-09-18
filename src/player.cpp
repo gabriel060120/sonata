@@ -92,9 +92,11 @@ void Player::actions() {
                 case true:
                     shortSleepingAction = true;
                     longSleepingAction = false;
+                    break;
                 case false:
                     shortSleepingAction = false;
                     longSleepingAction = true;
+                    break;
 
             } 
         }

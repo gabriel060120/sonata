@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <memory>
 #include <iostream>
 #include "player.hpp"
@@ -28,6 +29,13 @@ int main() {
     // backgroundTexture.loadFromFile("./assets/img/bg.jpg");
     // Sprite backgroundSprite(backgroundTexture);
 
+    sf::SoundBuffer metronome;
+    sf::Sound soundMetronome;
+    if(!metronome.loadFromFile("./../audio/sound_effects/metronome.wav")){
+        std::cout << std::endl << "Nao foi possivel carregar metronomo";
+    }
+    soundMetronome.setBuffer(metronome);
+
     // Texture floorTexture;
     RectangleShape floor(Vector2f(window->getSize().x, heightFloor));
     floor.setFillColor(Color::Yellow);
@@ -44,7 +52,8 @@ int main() {
         if(timerToAction >= actionInterval) {
             allowedAction = true;
             timerToAction = 0.f;
-            cout << "\x1B[0m>> Gatilho <<" << endl;
+            soundMetronome.play();
+            // cout << "\x1B[0m>> Gatilho <<" << endl;
         } else {
             allowedAction = false;
         }
