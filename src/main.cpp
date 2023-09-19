@@ -11,7 +11,7 @@ using namespace sf;
 int main() {
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(1280, 720),"Plataforma 2D", sf:: Style::Titlebar | sf::Style::Close);
     window->setPosition(Vector2i(80,0));
-    // window->setFramerateLimit(120);
+    window->setFramerateLimit(120);
     int fpsCounter = 0;
     float timerUpdateFps;
     const float heightFloor = 100.f;
@@ -38,6 +38,12 @@ int main() {
     }
     soundMetronome.setBuffer(metronome);
 
+    //music
+    sf::Music pad;
+    pad.openFromFile("../audio/soundtracks/pad.wav");
+    pad.setLoop(true);
+    pad.setVolume(50);
+
     //text
     sf::Font font;
     sf::Text fpsIndicator;
@@ -56,6 +62,9 @@ int main() {
     
     while(window->isOpen())
     {
+        if(pad.getStatus() == sf::Music::Stopped) {
+            pad.play();
+        }
         timeClock = gameClock.getElapsedTime().asSeconds();
         gameClock.restart();
         timerToAction += timeClock;
