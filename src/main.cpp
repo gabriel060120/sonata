@@ -42,7 +42,12 @@ int main() {
     sf::Music pad;
     pad.openFromFile("../audio/soundtracks/pad.wav");
     pad.setLoop(true);
-    pad.setVolume(50);
+    pad.setVolume(25);
+    sf::Music base1;
+    base1.openFromFile("../audio/soundtracks/base1.wav");
+    base1.setLoop(true);
+    // pad.setVolume(50);
+
 
     //text
     sf::Font font;
@@ -64,6 +69,9 @@ int main() {
     {
         if(pad.getStatus() == sf::Music::Stopped) {
             pad.play();
+        }
+        if(base1.getStatus() == sf::Music::Stopped) {
+            base1.play();
         }
         timeClock = gameClock.getElapsedTime().asSeconds();
         gameClock.restart();
