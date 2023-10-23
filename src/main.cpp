@@ -2,11 +2,25 @@
 #include <SFML/Audio.hpp>
 #include <memory>
 #include <iostream>
+#include <vector>
 #include "player.hpp"
 #include "enemy.hpp"
+#include "serie_music.hpp"
+#include "engine.hpp"
 
 using namespace std;
 using namespace sf;
+
+
+// int main() {
+    
+//     auto engine = shared_ptr<Engine>();
+//     engine->init();
+//     engine->update();
+
+//     return EXIT_SUCCESS;
+// }
+
 
 int main() {
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(1280, 720),"Plataforma 2D", sf:: Style::Titlebar | sf::Style::Close);
@@ -44,8 +58,14 @@ int main() {
     pad.setLoop(true);
     pad.setVolume(25);
     sf::Music base1;
-    base1.openFromFile("../audio/soundtracks/base1.wav");
+    base1.openFromFile("../audio/soundtracks/base_100bpm.wav");
     base1.setLoop(true);
+    // pad.setVolume(50);
+    int seriePosition = 0;
+    SerieMusic series("../audio/soundtracks/serie_1-1_100bpm.wav",
+        {1,1,1,1,1,-1,-2,1,1,1,0.5,0.5,1,-1,-2});
+    series.music.openFromFile("../audio/soundtracks/serie_1-1_100bpm.wav");
+    series.music.setLoop(true);
     // pad.setVolume(50);
 
 
@@ -72,6 +92,9 @@ int main() {
         }
         if(base1.getStatus() == sf::Music::Stopped) {
             base1.play();
+        }
+        if(series.music.getStatus() == sf::Music::Stopped) {
+            series.music.play();
         }
         timeClock = gameClock.getElapsedTime().asSeconds();
         gameClock.restart();
