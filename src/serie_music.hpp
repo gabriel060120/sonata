@@ -4,8 +4,6 @@
 #include <vector>
 #include <string>
 
-using namespace sf;
-
 class SerieMusic {
     private:
         int bpm;
@@ -13,9 +11,8 @@ class SerieMusic {
         std::string pathMusic;
     
     public:
-        sf::Music music;
     
         SerieMusic(std::string pathMusic, std::vector<float> triggers);
         std::vector<float> getTriggers();
-        sf::Music getMusic();
+        std::string getPathMusic();
 };

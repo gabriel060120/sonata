@@ -35,7 +35,9 @@ class Engine {
         sf::Music pad;
         sf::Music base1;
         std::vector<SerieMusic> series;
+        sf::Music serieMusic;
         int seriePosition;
+        void setMusics();
         //text
         sf::Font font;
         sf::Text fpsIndicator;

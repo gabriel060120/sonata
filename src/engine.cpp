@@ -5,12 +5,12 @@
 #include "enemy.hpp"
 #include "player.hpp"
 
-void Engine::init() {/*
+void Engine::init() {
     window = std::make_shared<sf::RenderWindow>(sf::VideoMode(1280, 720),"Plataforma 2D", sf:: Style::Titlebar | sf::Style::Close);
     window->setPosition(Vector2i(80,0));
     window->setFramerateLimit(120);
     
-    //engine controller
+    // //engine controller
     fpsCounter = 0;
     heightFloor = 100.f;
     timeClock = 0.f;
@@ -36,7 +36,7 @@ void Engine::init() {/*
     base1.openFromFile("../audio/soundtracks/base_100bpm.wav");
     base1.setLoop(true);
     seriePosition = 0;
-    series.push_back(SerieMusic("../audio/soundtracks/serie_1-1_100bpm.wav",{1,1,1,1,1,-1,-2,1,1,1,0.5,0.5,1,-1,-2}));
+    // serieMusic.openFromFile(series[seriePosition].getPathMusic());
 
     //text
     font.loadFromFile("../fonts/PixelBloated.ttf");
@@ -49,10 +49,10 @@ void Engine::init() {/*
     floor.setSize(Vector2f(this->window->getSize().x, heightFloor));
     floor.setFillColor(Color::Yellow);
     floor.setPosition(0.f, this->window->getSize().y - heightFloor);
-*/
+
 }
 
-void Engine::update() { /*
+void Engine::update() { 
     while(window->isOpen())
     {
         if(pad.getStatus() == sf::Music::Stopped) {
@@ -61,9 +61,9 @@ void Engine::update() { /*
         if(base1.getStatus() == sf::Music::Stopped) {
             base1.play();
         }
-        if(series[seriePosition].music.getStatus() == sf::Music::Stopped) {
-            series[seriePosition].music.play();
-        }
+        // if(serieMusic.getStatus() == sf::Music::Stopped) {
+        //     serieMusic.play();
+        // }
         timeClock = gameClock.getElapsedTime().asSeconds();
         gameClock.restart();
         timerToAction += timeClock;
@@ -107,5 +107,9 @@ void Engine::update() { /*
         player->render();
         window->display();
     }
-    */
+    
+}
+
+void Engine::setMusics() {
+    // series.push_back(SerieMusic("../audio/soundtracks/serie_1-1_100bpm.wav",{1,1,1,1,1,-1,-2,1,1,1,0.5,0.5,1,-1,-2}));
 }
