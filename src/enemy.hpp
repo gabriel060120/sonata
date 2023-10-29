@@ -62,6 +62,7 @@ class Enemy{
         void takeDamage();
         //getters
         int getLife();
+        int getState();
         //render object
         void render();
 };

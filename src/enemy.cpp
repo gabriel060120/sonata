@@ -43,7 +43,6 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
     toTakingDamage = false;
     state = -1;
 
-
     this->groundPosition = groundLocalization - sprite.getGlobalBounds().height;
     // sprite.setTextureRect(IntRect(0, groundPosition, ENEMY_SPRITE_WIDHT, ENEMY_SPRITE_HEIGHT));
     setPosition(Vector2f(window->getSize().x, groundPosition));
@@ -75,6 +74,7 @@ void Enemy::update(float clock, bool allowedAction) {
     takeDamage();
 
     if(inMoviment) {
+        state = -1;
         moviment(); 
     } else if(allowedAction) {
         if(state >= 2) {
@@ -204,4 +204,8 @@ void Enemy::takeDamage() {
 
 int Enemy::getLife() {
     return lifeBar->getLife();
+}
+
+int Enemy::getState() {
+    return state;
 }

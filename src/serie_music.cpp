@@ -3,9 +3,11 @@
 #include <vector>
 #include <iostream>
 
-SerieMusic::SerieMusic(std::string pathMusic, std::vector<float> triggers) {
+SerieMusic::SerieMusic(std::string pathMusic, std::vector<float> triggers, int compassSize, int bpm) {
     this->pathMusic = pathMusic;
     this->triggers = triggers;
+    this->compassSize = compassSize;
+    this->bpm = bpm;
 };
 
 std::vector<float> SerieMusic::getTriggers() {

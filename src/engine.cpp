@@ -8,7 +8,7 @@
 void Engine::init() {
     window = std::make_shared<sf::RenderWindow>(sf::VideoMode(1280, 720),"Plataforma 2D", sf:: Style::Titlebar | sf::Style::Close);
     window->setPosition(Vector2i(80,0));
-    window->setFramerateLimit(120);
+    window->setFramerateLimit(240);
     
     // //engine controller
     fpsCounter = 0;
@@ -18,6 +18,8 @@ void Engine::init() {
     timerToAction = 0.f;
     allowedAction = false;
     groundLocalization = window->getSize().y - heightFloor;
+    status = Status::Preparing;
+    firstChangeStatus = true;
 
     //living elements
     player = std::make_shared<Player>(window.get(), groundLocalization);
@@ -30,13 +32,12 @@ void Engine::init() {
     soundMetronome.setBuffer(metronome);
 
     //music
+    setMusics();
     pad.openFromFile("../audio/soundtracks/pad.wav");
-    pad.setLoop(true);
     pad.setVolume(25);
     base1.openFromFile("../audio/soundtracks/base_100bpm.wav");
-    base1.setLoop(true);
     seriePosition = 0;
-    // serieMusic.openFromFile(series[seriePosition].getPathMusic());
+    serieMusic.openFromFile(series[seriePosition].getPathMusic());
 
     //text
     font.loadFromFile("../fonts/PixelBloated.ttf");
@@ -52,18 +53,53 @@ void Engine::init() {
 
 }
 
-void Engine::update() { 
+void Engine::update() {
     while(window->isOpen())
     {
-        if(pad.getStatus() == sf::Music::Stopped) {
-            pad.play();
-        }
-        if(base1.getStatus() == sf::Music::Stopped) {
-            base1.play();
-        }
-        // if(serieMusic.getStatus() == sf::Music::Stopped) {
+        // if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
+        //     serieMusic.stop();
         //     serieMusic.play();
         // }
+        //Game Status
+        if(status == Status::Preparing) {
+            if(firstChangeStatus) {
+                std::cout << "================> Preparando <================" << std::endl;
+                repeatBase();
+                firstChangeStatus = false;
+            }
+            if(enemies.size() == 0) {
+                enemies.push_back(Enemy(window.get(), groundLocalization, player.get()));
+            }
+            if(!(base1.getStatus() == sf::Music::Playing) || (base1.getPlayingOffset() >= base1.getDuration())) {
+                status = Status::Presentation;
+                firstChangeStatus = true;
+            }
+        }
+        else if(status == Status::Presentation) {
+            if(firstChangeStatus) {
+                std::cout << "================> Apresentacao <================" << std::endl;
+                repeatBase();
+                serieMusic.play();
+                firstChangeStatus = false;
+            }
+            if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
+                status = Status::EnemyTurn;
+                firstChangeStatus = true;
+            }
+        }
+        else if(status == Status::EnemyTurn) {
+            if(firstChangeStatus) {
+                std::cout << "================> Turno Inimigo <================" << std::endl;
+                repeatBase();
+                serieMusic.play();
+                firstChangeStatus = false;
+            }
+            if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
+                status = Status::PlayerTurn;
+                firstChangeStatus = true;
+            }
+        }
+
         timeClock = gameClock.getElapsedTime().asSeconds();
         gameClock.restart();
         timerToAction += timeClock;
@@ -96,6 +132,7 @@ void Engine::update() {
             enemies[0].update(timeClock, allowedAction);
         
         
+        
         window->clear();
 
         //draw
@@ -104,12 +141,25 @@ void Engine::update() {
         window->draw(fpsIndicator);
         if(enemies[0].getLife() > 0)
             enemies[0].render();
+        else
+            enemies.clear();
         player->render();
         window->display();
     }
     
 }
 
+void Engine::repeatBase() {
+        pad.stop();
+        pad.play();
+        base1.stop();
+        base1.play();
+}
+
 void Engine::setMusics() {
-    // series.push_back(SerieMusic("../audio/soundtracks/serie_1-1_100bpm.wav",{1,1,1,1,1,-1,-2,1,1,1,0.5,0.5,1,-1,-2}));
+    series.push_back(SerieMusic("../audio/soundtracks/serie_1-1_100bpm.wav",{1,1,1,1,1,-1,-2,1,1,1,0.5,0.5,1,-1,-2}, 4, 100));
+}
+
+void Engine::setStatus(Status newStatus) {
+    status = newStatus;
 }

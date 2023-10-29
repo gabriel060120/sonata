@@ -13,6 +13,18 @@
 using namespace sf;
 
 class Engine {
+    public:
+        enum Status {
+            Preparing,
+            Presentation,
+            EnemyTurn,
+            PlayerTurn    
+        };
+        void init();
+        void update();
+        //setters
+        void setStatus(Status newStatus);
+
     private:
         //engine controller
         std::shared_ptr<sf::RenderWindow> window;
@@ -25,6 +37,8 @@ class Engine {
         Clock gameClock;
         bool allowedAction;
         int groundLocalization;
+        Status status;
+        bool firstChangeStatus;
         //living elements
         std::shared_ptr<Player> player;
         std::vector<Enemy> enemies;
@@ -38,6 +52,7 @@ class Engine {
         sf::Music serieMusic;
         int seriePosition;
         void setMusics();
+        void repeatBase();
         //text
         sf::Font font;
         sf::Text fpsIndicator;
@@ -49,7 +64,5 @@ class Engine {
 
 
 
-    public:
-        void init();
-        void update();
+    
 };
