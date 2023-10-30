@@ -42,6 +42,7 @@ class Engine {
         Status status;
         bool firstChangeStatus;
         void statusControl();
+        void getNextTimeAction();
         //living elements
         std::shared_ptr<Player> player;
         std::vector<Enemy> enemies;

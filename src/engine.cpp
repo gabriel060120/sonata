@@ -39,7 +39,7 @@ void Engine::init() {
     seriePosition = 0;
     serieMusic.openFromFile(series[seriePosition].getPathMusic());
     baseUnitTime = 60.f/series[seriePosition].getBpm();
-    actionInterval = baseUnitTime;
+    actionInterval = 0;
 
     //text
     font.loadFromFile("../fonts/PixelBloated.ttf");
@@ -75,6 +75,11 @@ void Engine::update() {
             allowedAction = true;
             timerToAction = 0.f;
             soundMetronome.play();
+            if(status == Status::EnemyTurn || status == Status::PlayerTurn) {
+                getNextTimeAction();
+            } else {
+                actionInterval = baseUnitTime;
+            }
             // cout << "\x1B[0m>> Gatilho <<" << endl;
         } else {
             allowedAction = false;
@@ -144,6 +149,8 @@ void Engine::statusControl() {
                 repeatBase();
                 serieMusic.play();
                 firstChangeStatus = false;
+                actionInterval = 0.f;
+                triggerIndex = 0;
             }
             if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
                 status = Status::PlayerTurn;
@@ -157,6 +164,8 @@ void Engine::statusControl() {
                 repeatBase();
                 serieMusic.play();
                 firstChangeStatus = false;
+                actionInterval = 0.f;
+                triggerIndex = 0;
             }
             if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
                 serieMusic.stop();
@@ -172,8 +181,28 @@ void Engine::repeatBase() {
         base1.play();
 }
 
+void Engine::getNextTimeAction() {
+    if(triggerIndex >= series[seriePosition].getTriggers().size()) {
+        actionInterval = 1000;
+    }
+
+    if(series[seriePosition].getTriggers()[triggerIndex] > 0) {
+        actionInterval = series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
+        triggerIndex++;
+    } else {
+        timerToAction += series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
+        triggerIndex++;
+        if(triggerIndex < series[seriePosition].getTriggers().size())
+            getNextTimeAction();
+    }
+}
+
+//=================================================================================================================================
+//||---------------------------------------------------- setters ----------------------------------------------------------------||
+//=================================================================================================================================
+
 void Engine::setMusics() {
-    series.push_back(SerieMusic("../audio/soundtracks/serie_1-1_100bpm.wav",{1,1,1,1,1,-1,-2,1,1,1,0.5,0.5,1,-1,-2}, 4, 100));
+    series.push_back(SerieMusic("../audio/soundtracks/serie_1-1_100bpm.wav",{1,1,1,-1,1,0.5,0.5,1,-1,0.5,0.5,1,1,-1,0.5,0.5,0.5,0.5,0.5}, 2, 100));
 }
 
 void Engine::setStatus(Status newStatus) {
