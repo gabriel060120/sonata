@@ -33,12 +33,15 @@ class Engine {
         float heightFloor;
         float timeClock;
         float actionInterval;
+        float baseUnitTime;
         float timerToAction;
         Clock gameClock;
         bool allowedAction;
+        int triggerIndex;
         int groundLocalization;
         Status status;
         bool firstChangeStatus;
+        void statusControl();
         //living elements
         std::shared_ptr<Player> player;
         std::vector<Enemy> enemies;

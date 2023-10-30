@@ -65,7 +65,8 @@ void Player::render() {
     lifeBar->render();
 }
 
-void Player::update(float clock, bool triggerAction) {
+void Player::update(float clock, bool triggerAction, int gameStatus) {
+    this->gameStatus = gameStatus;
     updateGameTime(clock, triggerAction);
 
     actions();
@@ -106,9 +107,9 @@ void Player::actions() {
             shortSleep();
         }else if(longSleepingAction) {
             longSleep();
-        }else if((Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))) {
+        }else if((Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D)) && gameStatus == 3) {
             attack();
-        } else if((Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))) {
+        } else if((Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A)) && gameStatus == 2) {
             block();
         } else {
             idle();

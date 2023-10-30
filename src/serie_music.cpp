@@ -10,10 +10,18 @@ SerieMusic::SerieMusic(std::string pathMusic, std::vector<float> triggers, int c
     this->bpm = bpm;
 };
 
+//=================================================================================================================================
+//||---------------------------------------------------- getters ----------------------------------------------------------------||
+//=================================================================================================================================
+
 std::vector<float> SerieMusic::getTriggers() {
     return triggers;
 }
 
 std::string SerieMusic::getPathMusic() {
     return pathMusic;
+}
+
+int SerieMusic::getBpm() {
+    return bpm;
 }

@@ -40,6 +40,7 @@ class Enemy{
         bool toTakingDamage;
         bool stateChanged;
         int state;
+        int gameStatus;
 
         int groundPosition;
         FloatRect rect;
@@ -51,7 +52,7 @@ class Enemy{
 
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock, bool allowedAction);
-        void update(float clock, bool allowedAction);
+        void update(float clock, bool allowedAction, int gameStatus);
         
         //actions
         void idle();

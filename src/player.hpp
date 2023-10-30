@@ -14,6 +14,7 @@ class Player {
         float frame;
         float gameTime;
         bool triggerAction;
+        int gameStatus;
         //action        
         float movimentSpeed;
         float dx, dy;
@@ -40,7 +41,7 @@ class Player {
 
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock, bool triggerAction);
-        void update(float clock, bool triggerAction);
+        void update(float clock, bool triggerAction, int gameStatus);
         //actions
         void actions();
         void block();

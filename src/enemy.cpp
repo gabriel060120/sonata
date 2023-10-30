@@ -68,8 +68,9 @@ void Enemy::render() {
     lifeBar->render();
 }
 
-void Enemy::update(float clock, bool allowedAction) {
+void Enemy::update(float clock, bool allowedAction, int gameStatus) {
     updateGameTime(clock, allowedAction);
+    this->gameStatus = gameStatus;
     
     takeDamage();
 
@@ -77,7 +78,7 @@ void Enemy::update(float clock, bool allowedAction) {
         state = -1;
         moviment(); 
     } else if(allowedAction) {
-        if(state >= 2) {
+        if(state >= 2 || gameStatus != 2) {
             state = 0;
         } else {
          state++;
@@ -170,7 +171,7 @@ void Enemy::attack() {
 }
 
 void Enemy::idle() {
-    if(allowedAction){
+    if(allowedAction && gameStatus == 2){
         sprite.setFillColor(Color(128,128,128));
         std::cout <<"\x1B[31mInimigo: parado" << std::endl;
         inIdle = true;

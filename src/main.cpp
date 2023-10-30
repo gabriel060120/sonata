@@ -15,7 +15,6 @@ using namespace sf;
 int main() {
     
     auto engine = make_unique<Engine>();
-    // auto engine = Engine();
     engine->init();
     engine->update();
 

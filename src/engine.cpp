@@ -14,8 +14,8 @@ void Engine::init() {
     fpsCounter = 0;
     heightFloor = 100.f;
     timeClock = 0.f;
-    actionInterval = 1.f;
     timerToAction = 0.f;
+    triggerIndex = 0;
     allowedAction = false;
     groundLocalization = window->getSize().y - heightFloor;
     status = Status::Preparing;
@@ -38,6 +38,8 @@ void Engine::init() {
     base1.openFromFile("../audio/soundtracks/base_100bpm.wav");
     seriePosition = 0;
     serieMusic.openFromFile(series[seriePosition].getPathMusic());
+    baseUnitTime = 60.f/series[seriePosition].getBpm();
+    actionInterval = baseUnitTime;
 
     //text
     font.loadFromFile("../fonts/PixelBloated.ttf");
@@ -56,12 +58,60 @@ void Engine::init() {
 void Engine::update() {
     while(window->isOpen())
     {
-        // if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
-        //     serieMusic.stop();
-        //     serieMusic.play();
-        // }
         //Game Status
-        if(status == Status::Preparing) {
+        statusControl();
+
+        timeClock = gameClock.getElapsedTime().asSeconds();
+        gameClock.restart();
+        timerToAction += timeClock;
+        timerUpdateFps += timeClock;
+        fpsCounter = (1/timeClock) + 1;
+
+        if(timerUpdateFps >= 0.25) {
+            timerUpdateFps = 0;
+            fpsIndicator.setString(std::to_string(fpsCounter) + "FPS");
+        }
+        if(timerToAction >= actionInterval) {
+            allowedAction = true;
+            timerToAction = 0.f;
+            soundMetronome.play();
+            // cout << "\x1B[0m>> Gatilho <<" << endl;
+        } else {
+            allowedAction = false;
+        }
+        sf::Event event;
+        while(window->pollEvent(event))
+        {
+            if(event.type == sf::Event::Closed)
+            {
+                window->close();
+            }
+        }
+        //updates
+        player->update(timeClock, allowedAction, status);
+        if(enemies[0].getLife() > 0)
+            enemies[0].update(timeClock, allowedAction, status);
+        
+        
+        
+        window->clear();
+
+        //draw
+        // window->draw(backgroundSprite);
+        window->draw(floor);
+        window->draw(fpsIndicator);
+        if(enemies[0].getLife() > 0)
+            enemies[0].render();
+        else
+            enemies.clear();
+        player->render();
+        window->display();
+    }
+    
+}
+
+void Engine::statusControl() {
+    if(status == Status::Preparing) {
             if(firstChangeStatus) {
                 std::cout << "================> Preparando <================" << std::endl;
                 repeatBase();
@@ -84,6 +134,7 @@ void Engine::update() {
             }
             if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
                 status = Status::EnemyTurn;
+                serieMusic.stop();
                 firstChangeStatus = true;
             }
         }
@@ -96,57 +147,22 @@ void Engine::update() {
             }
             if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
                 status = Status::PlayerTurn;
+                serieMusic.stop();
                 firstChangeStatus = true;
             }
         }
-
-        timeClock = gameClock.getElapsedTime().asSeconds();
-        gameClock.restart();
-        timerToAction += timeClock;
-        timerUpdateFps += timeClock;
-        fpsCounter = (1/timeClock) + 1;
-
-        if(timerUpdateFps >= 0.25) {
-            timerUpdateFps = 0;
-            fpsIndicator.setString(std::to_string(fpsCounter) + "FPS");
-        }
-        if(timerToAction >= actionInterval) {
-            allowedAction = true;
-            timerToAction = 0.f;
-            // soundMetronome.play();
-            // cout << "\x1B[0m>> Gatilho <<" << endl;
-        } else {
-            allowedAction = false;
-        }
-        sf::Event event;
-        while(window->pollEvent(event))
-        {
-            if(event.type == sf::Event::Closed)
-            {
+        else if(status == Status::PlayerTurn) {
+            if(firstChangeStatus) {
+                std::cout << "================> Turno Player <================" << std::endl;
+                repeatBase();
+                serieMusic.play();
+                firstChangeStatus = false;
+            }
+            if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
+                serieMusic.stop();
                 window->close();
             }
         }
-        //updates
-        player->update(timeClock, allowedAction);
-        if(enemies[0].getLife() > 0)
-            enemies[0].update(timeClock, allowedAction);
-        
-        
-        
-        window->clear();
-
-        //draw
-        // window->draw(backgroundSprite);
-        window->draw(floor);
-        window->draw(fpsIndicator);
-        if(enemies[0].getLife() > 0)
-            enemies[0].render();
-        else
-            enemies.clear();
-        player->render();
-        window->display();
-    }
-    
 }
 
 void Engine::repeatBase() {
