@@ -60,7 +60,7 @@ void Engine::update() {
     {
         //Game Status
         statusControl();
-
+        allowedAction = false;
         timeClock = gameClock.getElapsedTime().asSeconds();
         gameClock.restart();
         timerToAction += timeClock;
@@ -71,18 +71,24 @@ void Engine::update() {
             timerUpdateFps = 0;
             fpsIndicator.setString(std::to_string(fpsCounter) + "FPS");
         }
-        if(timerToAction >= actionInterval) {
-            allowedAction = true;
-            timerToAction = 0.f;
-            soundMetronome.play();
-            if(status == Status::EnemyTurn || status == Status::PlayerTurn) {
+        if(status == Status::Preparing || status == Status::Presentation) {
+            actionInterval = baseUnitTime;
+            if(timerToAction >= actionInterval) {
+                allowedAction = true;
+                timerToAction = 0.f;
+                soundMetronome.play();
+                // cout << "\x1B[0m>> Gatilho <<" << endl;
+            } 
+        } else if(status == Status::EnemyTurn || status == Status::PlayerTurn) {
+            if(firstChangeStatus) {
+                actionInterval = 0.f;
+                triggerIndex = 0;
+            } 
+            if(firstChangeStatus || timerToAction >= actionInterval) {
                 getNextTimeAction();
-            } else {
-                actionInterval = baseUnitTime;
+                timerToAction = 0.f;
+                soundMetronome.play();
             }
-            // cout << "\x1B[0m>> Gatilho <<" << endl;
-        } else {
-            allowedAction = false;
         }
         sf::Event event;
         while(window->pollEvent(event))
@@ -149,8 +155,6 @@ void Engine::statusControl() {
                 repeatBase();
                 serieMusic.play();
                 firstChangeStatus = false;
-                actionInterval = 0.f;
-                triggerIndex = 0;
             }
             if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
                 status = Status::PlayerTurn;
@@ -164,8 +168,6 @@ void Engine::statusControl() {
                 repeatBase();
                 serieMusic.play();
                 firstChangeStatus = false;
-                actionInterval = 0.f;
-                triggerIndex = 0;
             }
             if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
                 serieMusic.stop();
@@ -182,18 +184,18 @@ void Engine::repeatBase() {
 }
 
 void Engine::getNextTimeAction() {
-    if(triggerIndex >= series[seriePosition].getTriggers().size()) {
-        actionInterval = 1000;
-    }
-
-    if(series[seriePosition].getTriggers()[triggerIndex] > 0) {
-        actionInterval = series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
-        triggerIndex++;
+    int vectorSize = static_cast<int>(series[seriePosition].getTriggers().size());
+    if(vectorSize > triggerIndex) {
+        if(series[seriePosition].getTriggers()[triggerIndex] > 0) {
+            actionInterval = series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
+            triggerIndex++;
+            allowedAction = true;
+        } else {
+            actionInterval = -series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
+            triggerIndex++;
+        }
     } else {
-        timerToAction += series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
-        triggerIndex++;
-        if(triggerIndex < series[seriePosition].getTriggers().size())
-            getNextTimeAction();
+        actionInterval = 100;
     }
 }
 
