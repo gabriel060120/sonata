@@ -28,6 +28,8 @@ class Enemy{
 
         // actions control
         bool allowedAction;
+        bool inIntervalAllowedAction;
+        float allowedActionTime;
         bool changeAction;
         bool inIdle;
         bool inMoviment;
@@ -52,7 +54,7 @@ class Enemy{
 
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock, bool allowedAction);
-        void update(float clock, bool allowedAction, int gameStatus);
+        void update(float clock, bool allowedAction, bool inIntervalAllowedAction, int gameStatus);
         
         //actions
         void idle();

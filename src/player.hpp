@@ -1,6 +1,7 @@
 #pragma once
 #define PLAYER_H
-#include<SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <memory>
 #include "life_bar.hpp"
 
@@ -14,6 +15,7 @@ class Player {
         float frame;
         float gameTime;
         bool triggerAction;
+        bool inTriggerActionInterval;
         int gameStatus;
         //action        
         float movimentSpeed;
@@ -24,9 +26,15 @@ class Player {
         bool hitTrigger;
         RectangleShape attackBox;
         bool attackingAction;
+        bool toTakingDamage;
         bool blockingAction;
         bool longSleepingAction;
         bool shortSleepingAction;
+        //sound
+        sf::SoundBuffer blockSoundBuffer;
+        sf::Sound blockSound;
+        sf::SoundBuffer attackSoundBuffer;
+        sf::Sound attackSound;
 
         int groundPosition;
         FloatRect rect;
@@ -41,7 +49,7 @@ class Player {
 
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock, bool triggerAction);
-        void update(float clock, bool triggerAction, int gameStatus);
+        void update(float clock, bool triggerAction, bool inTriggerAction, int gameStatus);
         //actions
         void actions();
         void block();

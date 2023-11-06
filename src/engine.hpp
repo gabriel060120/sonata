@@ -14,7 +14,7 @@ using namespace sf;
 
 class Engine {
     public:
-        enum Status {
+        enum State {
             Preparing,
             Presentation,
             EnemyTurn,
@@ -23,7 +23,7 @@ class Engine {
         void init();
         void update();
         //setters
-        void setStatus(Status newStatus);
+        void setStatus(State newStatus);
 
     private:
         //engine controller
@@ -37,9 +37,12 @@ class Engine {
         float timerToAction;
         Clock gameClock;
         bool allowedAction;
+        float intervalAllowed;
+        float intervalAllowedTimer;
+        bool inIntervalAllowed;
         int triggerIndex;
         int groundLocalization;
-        Status status;
+        State status;
         bool firstChangeStatus;
         void statusControl();
         void getNextTimeAction();
@@ -60,6 +63,7 @@ class Engine {
         //text
         sf::Font font;
         sf::Text fpsIndicator;
+        sf::Text stateIndicator;
         //texture
         // Texture floorTexture;
         RectangleShape floor;

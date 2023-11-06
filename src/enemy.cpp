@@ -25,12 +25,13 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
     dx = 0;
     dy = 0;
     attackDistance = 50;
-    lifeBar = std::make_unique<LifeBar>(window, Vector2f(20.f, 10.f), 5, Vector2f(sprite.getPosition().x, sprite.getPosition().y - 30), Color::Red, Color(128,128,128));
+    lifeBar = std::make_unique<LifeBar>(window, Vector2f(5.f, 10.f), 20, Vector2f(sprite.getPosition().x, sprite.getPosition().y - 30), Color::Red, Color(128,128,128));
 
     //action timers
     timePreparingAttack = 1.f;
     timeAttack = 1.f;
     timerAction = 0.f;
+    allowedActionTime = 15;
     //action controllers
     inMoviment = true;
     inTakingDamage = false;
@@ -68,9 +69,10 @@ void Enemy::render() {
     lifeBar->render();
 }
 
-void Enemy::update(float clock, bool allowedAction, int gameStatus) {
+void Enemy::update(float clock, bool allowedAction, bool inIntervalAllowedAction, int gameStatus) {
     updateGameTime(clock, allowedAction);
     this->gameStatus = gameStatus;
+    this->inIntervalAllowedAction = inIntervalAllowedAction;
     
     takeDamage();
 
@@ -190,7 +192,11 @@ void Enemy::idle() {
 //=================================================================================================================================
 
 void Enemy::takeDamage() {
-    if(sprite.getGlobalBounds().intersects(player->getAttackBox().getGlobalBounds()) && !inTakingDamage && player->inAttacking()) {
+    if(sprite.getGlobalBounds().intersects(player->getAttackBox().getGlobalBounds()) 
+        && !inTakingDamage 
+        && player->inAttacking()
+        && (allowedAction || inIntervalAllowedAction)
+    ) {
         inTakingDamage = true;
         lifeBar->takeDamage(1);
         std::cout << "\x1B[31mInimigo: recebeu dano" << std::endl;

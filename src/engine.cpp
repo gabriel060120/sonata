@@ -17,8 +17,11 @@ void Engine::init() {
     timerToAction = 0.f;
     triggerIndex = 0;
     allowedAction = false;
+    intervalAllowed = 0.15f;
+    inIntervalAllowed = false;
+    intervalAllowedTimer = 0.0f;
     groundLocalization = window->getSize().y - heightFloor;
-    status = Status::Preparing;
+    status = State::Preparing;
     firstChangeStatus = true;
 
     //living elements
@@ -35,6 +38,7 @@ void Engine::init() {
     setMusics();
     pad.openFromFile("../audio/soundtracks/pad.wav");
     pad.setVolume(25);
+    pad.setLoop(true);
     base1.openFromFile("../audio/soundtracks/base_100bpm.wav");
     seriePosition = 0;
     serieMusic.openFromFile(series[seriePosition].getPathMusic());
@@ -42,11 +46,18 @@ void Engine::init() {
     actionInterval = 0;
 
     //text
-    font.loadFromFile("../fonts/PixelBloated.ttf");
+    font.loadFromFile("../fonts/arial.ttf");
+    //FPS
     fpsIndicator.setFont(font);
     fpsIndicator.setString(std::to_string(fpsCounter) + "FPS");
     fpsIndicator.setPosition(Vector2f(this->window->getSize().x - 150, 0));
     fpsIndicator.setScale(Vector2f(0.5f, 0.5f));
+    //Turn Indicator
+    stateIndicator.setFont(font);
+    stateIndicator.setString("Preparando");
+    stateIndicator.setScale(Vector2f(1.f, 1.f));
+    stateIndicator.setPosition(Vector2f((window->getSize().x - stateIndicator.getGlobalBounds().width)/ 2, 200));
+
 
     //texture
     floor.setSize(Vector2f(this->window->getSize().x, heightFloor));
@@ -67,19 +78,23 @@ void Engine::update() {
         timerUpdateFps += timeClock;
         fpsCounter = (1/timeClock) + 1;
 
+        if(inIntervalAllowed) {
+            intervalAllowedTimer += timeClock;
+        }
         if(timerUpdateFps >= 0.25) {
             timerUpdateFps = 0;
             fpsIndicator.setString(std::to_string(fpsCounter) + "FPS");
         }
-        if(status == Status::Preparing || status == Status::Presentation) {
+        
+        if(status == State::Preparing || status == State::Presentation) {
             actionInterval = baseUnitTime;
             if(timerToAction >= actionInterval) {
                 allowedAction = true;
                 timerToAction = 0.f;
-                soundMetronome.play();
+                // soundMetronome.play();
                 // cout << "\x1B[0m>> Gatilho <<" << endl;
             } 
-        } else if(status == Status::EnemyTurn || status == Status::PlayerTurn) {
+        } else if(status == State::EnemyTurn || status == State::PlayerTurn) {
             if(firstChangeStatus) {
                 actionInterval = 0.f;
                 triggerIndex = 0;
@@ -87,7 +102,12 @@ void Engine::update() {
             if(firstChangeStatus || timerToAction >= actionInterval) {
                 getNextTimeAction();
                 timerToAction = 0.f;
-                soundMetronome.play();
+                // soundMetronome.play();
+            }
+            if(intervalAllowedTimer >= intervalAllowed) {
+                inIntervalAllowed = false;
+                intervalAllowedTimer = 0.f;
+                std::cout << "================> fim intervalo<================" << std::endl;
             }
         }
         sf::Event event;
@@ -99,11 +119,9 @@ void Engine::update() {
             }
         }
         //updates
-        player->update(timeClock, allowedAction, status);
+        player->update(timeClock, allowedAction, intervalAllowed, status);
         if(enemies[0].getLife() > 0)
-            enemies[0].update(timeClock, allowedAction, status);
-        
-        
+            enemies[0].update(timeClock, allowedAction, inIntervalAllowed, status);
         
         window->clear();
 
@@ -111,10 +129,11 @@ void Engine::update() {
         // window->draw(backgroundSprite);
         window->draw(floor);
         window->draw(fpsIndicator);
+        window->draw(stateIndicator);
         if(enemies[0].getLife() > 0)
             enemies[0].render();
-        else
-            enemies.clear();
+        // else
+            // enemies.clear();
         player->render();
         window->display();
     }
@@ -122,65 +141,72 @@ void Engine::update() {
 }
 
 void Engine::statusControl() {
-    if(status == Status::Preparing) {
-            if(firstChangeStatus) {
-                std::cout << "================> Preparando <================" << std::endl;
-                repeatBase();
-                firstChangeStatus = false;
-            }
-            if(enemies.size() == 0) {
-                enemies.push_back(Enemy(window.get(), groundLocalization, player.get()));
-            }
-            if(!(base1.getStatus() == sf::Music::Playing) || (base1.getPlayingOffset() >= base1.getDuration())) {
-                status = Status::Presentation;
-                firstChangeStatus = true;
-            }
+    if(status == State::Preparing) {
+        if(firstChangeStatus) {
+            repeatBase();
+            std::cout << "================> Preparando <================" << std::endl;
+            firstChangeStatus = false;
+            stateIndicator.setString("Preparando");
+            stateIndicator.setPosition(Vector2f((window->getSize().x - stateIndicator.getGlobalBounds().width)/ 2, 200));
         }
-        else if(status == Status::Presentation) {
-            if(firstChangeStatus) {
-                std::cout << "================> Apresentacao <================" << std::endl;
-                repeatBase();
-                serieMusic.play();
-                firstChangeStatus = false;
-            }
-            if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
-                status = Status::EnemyTurn;
-                serieMusic.stop();
-                firstChangeStatus = true;
-            }
+        if(enemies.size() == 0) {
+            enemies.push_back(Enemy(window.get(), groundLocalization, player.get()));
         }
-        else if(status == Status::EnemyTurn) {
-            if(firstChangeStatus) {
-                std::cout << "================> Turno Inimigo <================" << std::endl;
-                repeatBase();
-                serieMusic.play();
-                firstChangeStatus = false;
-            }
-            if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
-                status = Status::PlayerTurn;
-                serieMusic.stop();
-                firstChangeStatus = true;
-            }
+        if(!(base1.getStatus() == sf::Music::Playing) || (base1.getPlayingOffset() >= base1.getDuration())) {
+            status = State::Presentation;
+            firstChangeStatus = true;
         }
-        else if(status == Status::PlayerTurn) {
-            if(firstChangeStatus) {
-                std::cout << "================> Turno Player <================" << std::endl;
-                repeatBase();
-                serieMusic.play();
-                firstChangeStatus = false;
-            }
-            if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
-                serieMusic.stop();
-                window->close();
-            }
+    }
+    else if(status == State::Presentation) {
+        if(firstChangeStatus) {
+            std::cout << "================> Apresentacao <================" << std::endl;
+            repeatBase();
+            serieMusic.play();
+            stateIndicator.setString("Apresentacao");
+            stateIndicator.setPosition(Vector2f((window->getSize().x - stateIndicator.getGlobalBounds().width)/ 2, 200));
+            firstChangeStatus = false;
         }
+        if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
+            status = State::EnemyTurn;
+            serieMusic.stop();
+            firstChangeStatus = true;
+        }
+    }
+    else if(status == State::EnemyTurn) {
+        if(firstChangeStatus) {
+            std::cout << "================> Turno Inimigo <================" << std::endl;
+            repeatBase();
+            serieMusic.play();
+            stateIndicator.setString("Turno Inimigo");
+            stateIndicator.setPosition(Vector2f((window->getSize().x - stateIndicator.getGlobalBounds().width)/ 2, 200));
+            firstChangeStatus = false;
+        }
+        if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
+            status = State::PlayerTurn;
+            serieMusic.stop();
+            firstChangeStatus = true;
+        }
+    }
+    else if(status == State::PlayerTurn) {
+        if(firstChangeStatus) {
+            std::cout << "================> Turno Player <================" << std::endl;
+            repeatBase();
+            serieMusic.play();
+            stateIndicator.setString("Seu Turno");
+            stateIndicator.setPosition(Vector2f((window->getSize().x - stateIndicator.getGlobalBounds().width)/ 2, 200));
+            firstChangeStatus = false;
+        }
+        if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
+            serieMusic.stop();
+            // window->close();
+        }
+    }
 }
 
 void Engine::repeatBase() {
-        pad.stop();
-        pad.play();
-        base1.stop();
-        base1.play();
+    pad.play();
+    base1.stop();
+    base1.play();
 }
 
 void Engine::getNextTimeAction() {
@@ -190,6 +216,8 @@ void Engine::getNextTimeAction() {
             actionInterval = series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
             triggerIndex++;
             allowedAction = true;
+            inIntervalAllowed = true;
+            // std::cout << "================> inicio intervalo<================" << std::endl;
         } else {
             actionInterval = -series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
             triggerIndex++;
@@ -207,6 +235,6 @@ void Engine::setMusics() {
     series.push_back(SerieMusic("../audio/soundtracks/serie_1-1_100bpm.wav",{1,1,1,-1,1,0.5,0.5,1,-1,0.5,0.5,1,1,-1,0.5,0.5,0.5,0.5,0.5}, 2, 100));
 }
 
-void Engine::setStatus(Status newStatus) {
+void Engine::setStatus(State newStatus) {
     status = newStatus;
 }

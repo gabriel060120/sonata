@@ -47,6 +47,15 @@ Player::Player(RenderWindow* renderWindow, int groundLocalization) {
     shortSleepingAction = false;
     hitTrigger = false;
 
+    //sound effects
+    if(!blockSoundBuffer.loadFromFile("./../audio/sound_effects/player_block.wav")){
+        std::cout << std::endl << "Nao foi possivel carregar som bloqueio";
+    }
+    blockSound.setBuffer(blockSoundBuffer);
+    if(!attackSoundBuffer.loadFromFile("./../audio/sound_effects/metronome.wav")){
+        std::cout << std::endl << "Nao foi possivel carregar som ataque";
+    }
+    attackSound.setBuffer(attackSoundBuffer);
 }
 
 void Player::updateGameTime(float clock, bool triggerAction) {
@@ -65,7 +74,7 @@ void Player::render() {
     lifeBar->render();
 }
 
-void Player::update(float clock, bool triggerAction, int gameStatus) {
+void Player::update(float clock, bool triggerAction, bool inTriggerAction, int gameStatus) {
     this->gameStatus = gameStatus;
     updateGameTime(clock, triggerAction);
 
@@ -82,24 +91,35 @@ void Player::actions() {
         blockingAction = false;
     }
     if(actionIndex == 2 || actionIndex == 1) {
-        if(triggerAction) {
+        if(inTriggerActionInterval) {
+            std::cout << "\x1B[32mConfia na call princeso" << std::endl; 
             hitTrigger = true;
+        }
+    }
+    if(toTakingDamage) {
+        if(inTriggerActionInterval) {
+            if(actionIndex == 1) {
+                toTakingDamage = false;
+            }
+        } else {
+            lifeBar->takeDamage(1);
+            toTakingDamage = false;
         }
     }
     if(timerActionTransition >= actiontransitionTime) {
         timerActionTransition = 0;
         if(actionIndex == 1 || actionIndex == 2) {
-            switch (hitTrigger) {
-                case true:
+            // switch (hitTrigger) {
+                // case true:
                     shortSleepingAction = true;
                     longSleepingAction = false;
-                    break;
-                case false:
-                    shortSleepingAction = false;
-                    longSleepingAction = true;
-                    break;
+                    // break;
+                // case false:
+                    // shortSleepingAction = false;
+                    // longSleepingAction = true;
+                    // break;
 
-            } 
+            // } 
         }
     }
     if(timerActionTransition == 0) {
@@ -126,19 +146,18 @@ void Player::idle() {
 void Player::block() {
     std::cout << "\x1B[32mPlayer: bloqueando" << std::endl; 
     actionIndex = 1;
-    actiontransitionTime = 0.25;
+    actiontransitionTime = 0.15;
     blockingAction = true;
     if(sprite.getFillColor() != Color::Blue) {
         sprite.setFillColor(Color::Blue);
         // longSleepingAction = true;
     }
-    if(triggerAction) {
-        // longSleepingAction = false;
+    if(inTriggerActionInterval) {
     }
 }
 void Player::attack() {
     actionIndex = 2;
-    actiontransitionTime = 0.25;
+    actiontransitionTime = 0.15;
     attackingAction = true;
 
     if(sprite.getFillColor() != Color::Red) {
@@ -161,7 +180,7 @@ void Player::longSleep() {
 
 void Player::shortSleep() {
     std::cout << "\x1B[32mPlayer: pausa curta" << std::endl; 
-    actiontransitionTime = 0.15;
+    actiontransitionTime = 0.05;
     actionIndex = 4;
     shortSleepingAction = false;
     if(sprite.getFillColor() != Color(123,104,238)) 
@@ -203,7 +222,7 @@ void Player::shortSleep() {
 
 void Player::takeDamage(int valueDamage) {
     if(actionIndex != 1) {
-        lifeBar->takeDamage(valueDamage);
+        toTakingDamage = true;
     }
 }
 
