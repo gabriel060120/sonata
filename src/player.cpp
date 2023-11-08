@@ -48,11 +48,13 @@ Player::Player(RenderWindow* renderWindow, int groundLocalization) {
     hitTrigger = false;
 
     //sound effects
+    //block
     if(!blockSoundBuffer.loadFromFile("./../audio/sound_effects/player_block.wav")){
         std::cout << std::endl << "Nao foi possivel carregar som bloqueio";
     }
     blockSound.setBuffer(blockSoundBuffer);
-    if(!attackSoundBuffer.loadFromFile("./../audio/sound_effects/metronome.wav")){
+    //attack
+    if(!attackSoundBuffer.loadFromFile("./../audio/sound_effects/sword_attack.wav")){
         std::cout << std::endl << "Nao foi possivel carregar som ataque";
     }
     attackSound.setBuffer(attackSoundBuffer);
@@ -148,6 +150,7 @@ void Player::block() {
     actionIndex = 1;
     actiontransitionTime = 0.15;
     blockingAction = true;
+    blockSound.play();
     if(sprite.getFillColor() != Color::Blue) {
         sprite.setFillColor(Color::Blue);
         // longSleepingAction = true;
@@ -159,7 +162,7 @@ void Player::attack() {
     actionIndex = 2;
     actiontransitionTime = 0.15;
     attackingAction = true;
-
+    attackSound.play();
     if(sprite.getFillColor() != Color::Red) {
         sprite.setFillColor(Color::Red);
         // longSleepingAction = true;
