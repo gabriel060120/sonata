@@ -19,7 +19,8 @@ void Engine::init() {
     allowedAction = false;
     intervalAllowed = 0.15f;
     inIntervalAllowed = false;
-    intervalAllowedTimer = 0.0f;
+    intervalAllowedTimer = 0.f;
+    initAllowedTimer = false;
     groundLocalization = window->getSize().y - heightFloor;
     status = State::Preparing;
     firstChangeStatus = true;
@@ -78,7 +79,8 @@ void Engine::update() {
         timerUpdateFps += timeClock;
         fpsCounter = (1/timeClock) + 1;
 
-        if(inIntervalAllowed) {
+        
+        if(initAllowedTimer) {
             intervalAllowedTimer += timeClock;
         }
         if(timerUpdateFps >= 0.25) {
@@ -104,10 +106,15 @@ void Engine::update() {
                 timerToAction = 0.f;
                 // soundMetronome.play();
             }
+            if((timerToAction >= (actionInterval - intervalAllowed)) && !inIntervalAllowed) {
+                // std::cout << "================> inicio intervalo<================" << std::endl;
+                inIntervalAllowed = true;
+            }
             if(intervalAllowedTimer >= intervalAllowed) {
                 inIntervalAllowed = false;
+                initAllowedTimer= false;
                 intervalAllowedTimer = 0.f;
-                std::cout << "================> fim intervalo<================" << std::endl;
+                // std::cout << "================> fim intervalo<================" << std::endl;
             }
         }
         sf::Event event;
@@ -216,8 +223,8 @@ void Engine::getNextTimeAction() {
             actionInterval = series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
             triggerIndex++;
             allowedAction = true;
-            inIntervalAllowed = true;
-            // std::cout << "================> inicio intervalo<================" << std::endl;
+            initAllowedTimer = true;
+            std::cout << "================> meio intervalo<================" << std::endl;
         } else {
             actionInterval = -series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
             triggerIndex++;

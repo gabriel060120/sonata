@@ -39,6 +39,7 @@ class Engine {
         bool allowedAction;
         float intervalAllowed;
         float intervalAllowedTimer;
+        bool initAllowedTimer;
         bool inIntervalAllowed;
         int triggerIndex;
         int groundLocalization;
