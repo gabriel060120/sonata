@@ -35,6 +35,8 @@ class Player {
         sf::Sound blockSound;
         sf::SoundBuffer attackSoundBuffer;
         sf::Sound attackSound;
+        sf::SoundBuffer errorSoundBuffer;
+        sf::Sound errorSound;
 
         int groundPosition;
         FloatRect rect;

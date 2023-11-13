@@ -58,6 +58,11 @@ Player::Player(RenderWindow* renderWindow, int groundLocalization) {
         std::cout << std::endl << "Nao foi possivel carregar som ataque";
     }
     attackSound.setBuffer(attackSoundBuffer);
+    //error
+    if(!errorSoundBuffer.loadFromFile("./../audio/sound_effects/error.wav")){
+        std::cout << std::endl << "Nao foi possivel carregar som de erro";
+    }
+    errorSound.setBuffer(errorSoundBuffer);
 }
 
 void Player::updateGameTime(float clock, bool triggerAction) {
@@ -78,6 +83,7 @@ void Player::render() {
 
 void Player::update(float clock, bool triggerAction, bool inTriggerAction, int gameStatus) {
     this->gameStatus = gameStatus;
+    this->inTriggerActionInterval = inTriggerAction;
     updateGameTime(clock, triggerAction);
 
     actions();
@@ -94,37 +100,45 @@ void Player::actions() {
     }
     if(actionIndex == 2 || actionIndex == 1) {
         if(inTriggerActionInterval) {
-            std::cout << "\x1B[32mConfia na call princeso" << std::endl; 
+            // std::cout << "\x1B[32mConfia na call princeso" << std::endl; 
             hitTrigger = true;
         }
     }
     if(toTakingDamage) {
         if(inTriggerActionInterval) {
+            
             if(actionIndex == 1) {
+            // std::cout << "\x1B[32mConfia na call princeso " << actionIndex << std::endl; 
                 toTakingDamage = false;
             }
         } else {
+            // std::cout << "\x1B[32mConfia na call princeso " << actionIndex << std::endl; 
             lifeBar->takeDamage(1);
             toTakingDamage = false;
         }
     }
+    if(!inTriggerActionInterval) {
+        blockingAction = false;
+        attackingAction = false;
+    }
     if(timerActionTransition >= actiontransitionTime) {
         timerActionTransition = 0;
         if(actionIndex == 1 || actionIndex == 2) {
-            // switch (hitTrigger) {
-                // case true:
+            switch (hitTrigger) {
+                case true:
                     shortSleepingAction = true;
                     longSleepingAction = false;
-                    // break;
-                // case false:
-                    // shortSleepingAction = false;
-                    // longSleepingAction = true;
-                    // break;
+                    break;
+                case false:
+                    shortSleepingAction = false;
+                    longSleepingAction = true;
+                    break;
 
-            // } 
+            } 
         }
     }
     if(timerActionTransition == 0) {
+        hitTrigger = false;
         if(shortSleepingAction) {
             shortSleep();
         }else if(longSleepingAction) {
@@ -149,32 +163,37 @@ void Player::block() {
     std::cout << "\x1B[32mPlayer: bloqueando" << std::endl; 
     actionIndex = 1;
     actiontransitionTime = 0.15;
-    blockingAction = true;
-    blockSound.play();
+    // blockingAction = true;
     if(sprite.getFillColor() != Color::Blue) {
         sprite.setFillColor(Color::Blue);
         // longSleepingAction = true;
     }
     if(inTriggerActionInterval) {
+        blockSound.play();
+        blockingAction = true;
+    } else {
+        errorSound.play();
     }
 }
 void Player::attack() {
     actionIndex = 2;
     actiontransitionTime = 0.15;
-    attackingAction = true;
-    attackSound.play();
+    // attackingAction = true;
     if(sprite.getFillColor() != Color::Red) {
         sprite.setFillColor(Color::Red);
         // longSleepingAction = true;
     }
-    if(triggerAction) {
-        // longSleepingAction = false;
+    if(inTriggerActionInterval) {
+        attackSound.play();
+        attackingAction = true;
+    } else {
+        errorSound.play();
     }
 }
 
 void Player::longSleep() {
     std::cout << "\x1B[32mPlayer: pausa longa" << std::endl; 
-    actiontransitionTime = 0.5;
+    actiontransitionTime = 1.0f;
     actionIndex = 3;
     longSleepingAction = false;
     if(sprite.getFillColor() != Color(238,130,238)) 
@@ -241,5 +260,5 @@ bool Player::inAttacking() {
     return attackingAction;
 }
 bool Player::inBlocking() {
-    return actionIndex == 1;
+    return blockingAction;
 }

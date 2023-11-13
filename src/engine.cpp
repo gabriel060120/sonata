@@ -17,7 +17,7 @@ void Engine::init() {
     timerToAction = 0.f;
     triggerIndex = 0;
     allowedAction = false;
-    intervalAllowed = 0.15f;
+    intervalAllowed = 0.07f;
     inIntervalAllowed = false;
     intervalAllowedTimer = 0.f;
     initAllowedTimer = false;
@@ -79,7 +79,6 @@ void Engine::update() {
         timerUpdateFps += timeClock;
         fpsCounter = (1/timeClock) + 1;
 
-        
         if(initAllowedTimer) {
             intervalAllowedTimer += timeClock;
         }
@@ -107,14 +106,14 @@ void Engine::update() {
                 // soundMetronome.play();
             }
             if((timerToAction >= (actionInterval - intervalAllowed)) && !inIntervalAllowed) {
-                // std::cout << "================> inicio intervalo<================" << std::endl;
+                std::cout << "================> inicio intervalo<================" << std::endl;
                 inIntervalAllowed = true;
             }
             if(intervalAllowedTimer >= intervalAllowed) {
                 inIntervalAllowed = false;
                 initAllowedTimer= false;
                 intervalAllowedTimer = 0.f;
-                // std::cout << "================> fim intervalo<================" << std::endl;
+                std::cout << "================> fim intervalo<================" << std::endl;
             }
         }
         sf::Event event;
@@ -126,7 +125,7 @@ void Engine::update() {
             }
         }
         //updates
-        player->update(timeClock, allowedAction, intervalAllowed, status);
+        player->update(timeClock, allowedAction, inIntervalAllowed, status);
         if(enemies[0].getLife() > 0)
             enemies[0].update(timeClock, allowedAction, inIntervalAllowed, status);
         
@@ -224,7 +223,7 @@ void Engine::getNextTimeAction() {
             triggerIndex++;
             allowedAction = true;
             initAllowedTimer = true;
-            std::cout << "================> meio intervalo<================" << std::endl;
+            std::cout << "================> gatilho <================" << std::endl;
         } else {
             actionInterval = -series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
             triggerIndex++;
