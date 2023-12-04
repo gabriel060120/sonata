@@ -6,7 +6,7 @@
 #include "player.hpp"
 
 void Engine::init() {
-    window = std::make_shared<sf::RenderWindow>(sf::VideoMode(1280, 720),"Plataforma 2D", sf:: Style::Titlebar | sf::Style::Close);
+    window = std::make_shared<sf::RenderWindow>(sf::VideoMode(1280, 720),"SONATA v0.1", sf:: Style::Titlebar | sf::Style::Close);
     window->setPosition(Vector2i(80,0));
     window->setFramerateLimit(240);
     
@@ -238,7 +238,7 @@ void Engine::getNextTimeAction() {
 //=================================================================================================================================
 
 void Engine::setMusics() {
-    series.push_back(SerieMusic("../audio/soundtracks/serie_1-1_100bpm.wav",{1,1,1,-1,1,0.5,0.5,1,-1,0.5,0.5,1,1,-1,0.5,0.5,0.5,0.5,0.5}, 2, 100));
+    series.push_back(SerieMusic("../audio/soundtracks/serie_1-1_100bpm.wav",{1,1,1,-1,1,0.5,0.5,1,-1,0.5,0.5,1,1,-1,0.5,0.5,0.5,0.5,0.5}, 100));
 }
 
 void Engine::setStatus(State newStatus) {
