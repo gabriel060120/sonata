@@ -100,7 +100,6 @@ void Player::actions() {
     }
     if(actionIndex == 2 || actionIndex == 1) {
         if(inTriggerActionInterval) {
-            // std::cout << "\x1B[32mConfia na call princeso" << std::endl; 
             hitTrigger = true;
         }
     }
@@ -108,11 +107,9 @@ void Player::actions() {
         if(inTriggerActionInterval) {
             
             if(actionIndex == 1) {
-            // std::cout << "\x1B[32mConfia na call princeso " << actionIndex << std::endl; 
                 toTakingDamage = false;
             }
         } else {
-            // std::cout << "\x1B[32mConfia na call princeso " << actionIndex << std::endl; 
             lifeBar->takeDamage(1);
             toTakingDamage = false;
         }
@@ -163,31 +160,30 @@ void Player::block() {
     std::cout << "\x1B[32mPlayer: bloqueando" << std::endl; 
     actionIndex = 1;
     actiontransitionTime = 0.15;
-    // blockingAction = true;
     if(sprite.getFillColor() != Color::Blue) {
         sprite.setFillColor(Color::Blue);
-        // longSleepingAction = true;
     }
     if(inTriggerActionInterval) {
         blockSound.play();
         blockingAction = true;
     } else {
         errorSound.play();
+        longSleepingAction = true;
     }
 }
 void Player::attack() {
+    std::cout << "\x1B[32mPlayer: atacando" << std::endl; 
     actionIndex = 2;
     actiontransitionTime = 0.15;
-    // attackingAction = true;
     if(sprite.getFillColor() != Color::Red) {
         sprite.setFillColor(Color::Red);
-        // longSleepingAction = true;
     }
     if(inTriggerActionInterval) {
         attackSound.play();
         attackingAction = true;
     } else {
         errorSound.play();
+        longSleepingAction = true;
     }
 }
 

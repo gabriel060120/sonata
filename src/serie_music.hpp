@@ -16,3 +16,4 @@ class SerieMusic {
         std::string getPathMusic();
         int getBpm();
 };
+
