@@ -9,6 +9,7 @@
 #include "player.hpp"
 #include "enemy.hpp"
 #include "serie_music.hpp"
+#include "scene.hpp"
 
 using namespace sf;
 
@@ -68,6 +69,8 @@ class Engine {
         //texture
         // Texture floorTexture;
         RectangleShape floor;
+        //scene
+        std::unique_ptr<Scene> scene;
 
 
 
