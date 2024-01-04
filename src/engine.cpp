@@ -135,7 +135,7 @@ void Engine::update() {
 
         //draw
         // window->draw(backgroundSprite);
-        scene->renderFloor();
+        scene->render();
         // window->draw(floor);
         window->draw(fpsIndicator);
         window->draw(stateIndicator);
