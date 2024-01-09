@@ -13,6 +13,11 @@ const float FRAME_VELOCITY = 5;
 Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player) {
     this->window = renderWindow;
     this->player = player;
+    this->groundPosition = groundLocalization;
+    init();
+}
+
+void Enemy::init() {
     // texture.loadFromFile(ENEMY_TEXTURE);
     // sprite.setTexture(texture);
     // sprite.setTexture(texture);
@@ -44,11 +49,8 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
     toTakingDamage = false;
     state = -1;
 
-    this->groundPosition = groundLocalization - sprite.getGlobalBounds().height;
     // sprite.setTextureRect(IntRect(0, groundPosition, ENEMY_SPRITE_WIDHT, ENEMY_SPRITE_HEIGHT));
-    setPosition(Vector2f(window->getSize().x, groundPosition));
-
-
+    setPosition(Vector2f(window->getSize().x, groundPosition - sprite.getGlobalBounds().height));
 }
 
 void Enemy::updateGameTime(float clock, bool allowedAction) {

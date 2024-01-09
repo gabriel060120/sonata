@@ -52,6 +52,7 @@ class Enemy{
 
         Enemy(RenderWindow* renderWindow, int groundLocalization, Player * player);
 
+        void init();
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock, bool allowedAction);
         void update(float clock, bool allowedAction, bool inIntervalAllowedAction, int gameStatus);
