@@ -94,7 +94,7 @@ void Engine::update() {
             if(timerToAction >= actionInterval) {
                 allowedAction = true;
                 timerToAction = 0.f;
-                // soundMetronome.play();
+                soundMetronome.play();
                 // cout << "\x1B[0m>> Gatilho <<" << endl;
             } 
         } else if(status == State::EnemyTurn || status == State::PlayerTurn) {
@@ -105,7 +105,7 @@ void Engine::update() {
             if(firstChangeStatus || timerToAction >= actionInterval) {
                 getNextTimeAction();
                 timerToAction = 0.f;
-                // soundMetronome.play();
+                soundMetronome.play();
             }
             if((timerToAction >= (actionInterval - intervalAllowed)) && !inIntervalAllowed) {
                 // std::cout << "================> inicio intervalo<================" << std::endl;

@@ -8,9 +8,15 @@ using namespace sf;
 class Enemy{
     private:
         RenderWindow* window;
-        Texture texture;
         Player * player;
         std::unique_ptr<LifeBar> lifeBar;
+
+        enum SpriteAnim {
+            Idle,
+            Moviment,
+            PreparingAttack,
+            Attack    
+        };
 
         //game timers
         float frame;
@@ -25,6 +31,13 @@ class Enemy{
         float timePreparingAttack;
         float timeAttack;
         float timerAction;
+
+        // animation
+        std::vector<sf::Texture> textures;
+        SpriteAnim animStatus;
+        std::vector<int> framesMax;
+        float frameTime;
+        void setAnimData();
 
         // actions control
         bool allowedAction;
@@ -46,9 +59,9 @@ class Enemy{
 
         int groundPosition;
         FloatRect rect;
+        
     public:
-        // Sprite sprite;
-        RectangleShape sprite;
+        Sprite sprite;
 
         Enemy(RenderWindow* renderWindow, int groundLocalization, Player * player);
 

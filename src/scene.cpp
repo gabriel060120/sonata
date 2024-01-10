@@ -34,7 +34,6 @@ void Scene::renderBackground() {
         }
         positionY += backgroundRectangle.getSize().y;
         positionX = 0.f;
-        std::cout << "Y:" << positionY << std::endl;
     }    
 }
 

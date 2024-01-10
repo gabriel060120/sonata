@@ -5,7 +5,7 @@
 
 using namespace sf;
 
-// const String ENEMY_TEXTURE = "./assets/sprites/Enemy/idle.png";
+const String ENEMY_TEXTURE = "./../assets/sprites/enemy/enemy_idle.png";
 const int ENEMY_SPRITE_WIDHT = 50;
 const int ENEMY_SPRITE_HEIGHT = 37;
 const float FRAME_VELOCITY = 5;
@@ -14,15 +14,23 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
     this->window = renderWindow;
     this->player = player;
     this->groundPosition = groundLocalization;
+    setAnimData();
     init();
 }
 
+void Enemy::setAnimData() {
+    textures.push_back(Texture());
+    textures[0].loadFromFile(ENEMY_TEXTURE);
+
+    sprite.setTexture(textures[0]);
+    sprite.setTextureRect(IntRect(0,0,24,32));
+    sprite.setScale(3.0f, 3.0f);
+
+    framesMax.push_back(11);
+}
+
 void Enemy::init() {
-    // texture.loadFromFile(ENEMY_TEXTURE);
-    // sprite.setTexture(texture);
-    // sprite.setTexture(texture);
-    sprite.setSize(Vector2f(100.f, 100.f));
-    sprite.setFillColor(Color(128,128,128));
+    animStatus = SpriteAnim::Idle;
     frame = 0.f;
     //timers
     gameClock = 0.0f;
@@ -148,7 +156,7 @@ void Enemy::preparingAttack() {
         std::cout <<"\x1B[31mInimigo: preparando ataque" << std::endl;
         inPreparingAttack = true;
         stateChanged = true;
-        sprite.setFillColor(Color(255,165,0));
+        // sprite.setFillColor(Color(255,165,0));
     } 
     // else if(allowedAction && stateChanged) {
         // toAttack = true;
@@ -163,7 +171,7 @@ void Enemy::attack() {
         std::cout <<"\x1B[31mInimigo: atacando" << std::endl;
         inAttacking = true;
         stateChanged = true;
-        sprite.setFillColor(Color::Red);
+        // sprite.setFillColor(Color::Red);
         player->takeDamage(1);
     } 
     // else if(allowedAction && stateChanged) {
@@ -176,7 +184,7 @@ void Enemy::attack() {
 
 void Enemy::idle() {
     if(allowedAction && gameStatus == 2){
-        sprite.setFillColor(Color(128,128,128));
+        // sprite.setFillColor(Color(128,128,128));
         std::cout <<"\x1B[31mInimigo: parado" << std::endl;
         inIdle = true;
         stateChanged = true;
