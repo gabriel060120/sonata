@@ -5,9 +5,10 @@
 
 using namespace sf;
 
-const String ENEMY_TEXTURE = "./../assets/sprites/enemy/enemy_idle.png";
-const int ENEMY_SPRITE_WIDHT = 50;
-const int ENEMY_SPRITE_HEIGHT = 37;
+const String ENEMY_TEXTURE_IDLE = "./../assets/sprites/enemy/enemy_idle.png";
+const String ENEMY_TEXTURE_MOVIMENT = "./../assets/sprites/enemy/enemy_moviment.png";
+const int ENEMY_SPRITE_WIDHT = 24;
+const int ENEMY_SPRITE_HEIGHT = 32;
 const float FRAME_VELOCITY = 5;
 
 Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player) {
@@ -19,14 +20,22 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
 }
 
 void Enemy::setAnimData() {
-    textures.push_back(Texture());
-    textures[0].loadFromFile(ENEMY_TEXTURE);
-
-    sprite.setTexture(textures[0]);
-    sprite.setTextureRect(IntRect(0,0,24,32));
-    sprite.setScale(3.0f, 3.0f);
-
+    // idle
     framesMax.push_back(11);
+    textures.push_back(Texture());
+    textures[SpriteAnim::Idle].loadFromFile(ENEMY_TEXTURE_IDLE);
+    spriteSize.push_back(Vector2i(24,32));
+    
+    // moviment
+    framesMax.push_back(13);
+    textures.push_back(Texture());
+    textures[SpriteAnim::Moviment].loadFromFile(ENEMY_TEXTURE_MOVIMENT);
+    spriteSize.push_back(Vector2i(22,32));
+
+    sprite.setTexture(textures[SpriteAnim::Idle]);
+    sprite.setTextureRect(IntRect(0,0,spriteSize[SpriteAnim::Idle].x, spriteSize[SpriteAnim::Idle].y));
+    sprite.setScale(3.0f, 3.0f);
+    frameTime = 10.f;
 }
 
 void Enemy::init() {
@@ -56,8 +65,8 @@ void Enemy::init() {
     toAttack = false;
     toTakingDamage = false;
     state = -1;
+    previousState = 0;
 
-    // sprite.setTextureRect(IntRect(0, groundPosition, ENEMY_SPRITE_WIDHT, ENEMY_SPRITE_HEIGHT));
     setPosition(Vector2f(window->getSize().x, groundPosition - sprite.getGlobalBounds().height));
 }
 
@@ -85,6 +94,7 @@ void Enemy::update(float clock, bool allowedAction, bool inIntervalAllowedAction
     this->inIntervalAllowedAction = inIntervalAllowedAction;
     
     takeDamage();
+    animation();
 
     if(inMoviment) {
         state = -1;
@@ -120,12 +130,14 @@ void Enemy::update(float clock, bool allowedAction, bool inIntervalAllowedAction
 
 void Enemy::moviment() {
     inMoviment = true;
+    animStatus = SpriteAnim::Moviment;
+
 
     if((player->sprite.getPosition().x - attackDistance) > (sprite.getPosition().x + sprite.getGlobalBounds().width)) {
         dx = movimentSpeed;
         // sprite.move(movimentSpeed * gameClock, 0.f);
         
-        frame += FRAME_VELOCITY * gameClock;
+        // frame += FRAME_VELOCITY * gameClock;
         if(frame > 3) {
             frame -= 3;
         }
@@ -133,7 +145,7 @@ void Enemy::moviment() {
     } else if((player->sprite.getPosition().x + attackDistance + player->sprite.getGlobalBounds().width) < sprite.getPosition().x) {
         dx = -movimentSpeed;
         // sprite.move(-movimentSpeed * gameClock, 0.f);
-        frame += FRAME_VELOCITY * gameClock;
+        // frame += FRAME_VELOCITY * gameClock;
         if(frame > 3) {
             frame -= 3;
         }
@@ -151,6 +163,7 @@ void Enemy::moviment() {
 
 void Enemy::preparingAttack() {
     timerAction += gameClock;
+    animStatus = SpriteAnim::PreparingAttack;
 
     if(allowedAction){
         std::cout <<"\x1B[31mInimigo: preparando ataque" << std::endl;
@@ -168,6 +181,7 @@ void Enemy::preparingAttack() {
 
 void Enemy::attack() {
     if(allowedAction){
+        animStatus = SpriteAnim::PreparingAttack;
         std::cout <<"\x1B[31mInimigo: atacando" << std::endl;
         inAttacking = true;
         stateChanged = true;
@@ -195,6 +209,16 @@ void Enemy::idle() {
         // toIdle = false;
         // inIdle = false;
     // }
+}
+
+void Enemy::animation() {
+    
+    frame += frameTime * gameClock;
+    if(frame >= (framesMax[animStatus] - 1)) {
+        frame = 0;
+    }
+
+    sprite.setTextureRect(IntRect(spriteSize[animStatus].x * (int) frame + spriteSize[animStatus].x, 0, spriteSize[animStatus].x,spriteSize[animStatus].y));
 }
 
 //=================================================================================================================================

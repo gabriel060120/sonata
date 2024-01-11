@@ -19,7 +19,6 @@ class Enemy{
         };
 
         //game timers
-        float frame;
         float gameClock;
 
         //moviment
@@ -36,8 +35,10 @@ class Enemy{
         std::vector<sf::Texture> textures;
         SpriteAnim animStatus;
         std::vector<int> framesMax;
+        std::vector<Vector2i> spriteSize;
         float frameTime;
         void setAnimData();
+        float frame;
 
         // actions control
         bool allowedAction;
@@ -55,6 +56,7 @@ class Enemy{
         bool toTakingDamage;
         bool stateChanged;
         int state;
+        int previousState;
         int gameStatus;
 
         int groundPosition;
@@ -69,6 +71,8 @@ class Enemy{
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock, bool allowedAction);
         void update(float clock, bool allowedAction, bool inIntervalAllowedAction, int gameStatus);
+        
+        void animation();
         
         //actions
         void idle();
