@@ -35,10 +35,14 @@ class Enemy{
         std::vector<sf::Texture> textures;
         SpriteAnim animStatus;
         std::vector<int> framesMax;
-        std::vector<Vector2i> spriteSize;
-        float frameTime;
+        std::vector<std::vector<int>> spriteWidth;
+        std::vector<int> spriteHeight;
+        std::vector<float> frameTime;
         void setAnimData();
         float frame;
+        int previousFrame;
+        int previousSpriteWidth;
+        float finalPosition;
 
         // actions control
         bool allowedAction;
