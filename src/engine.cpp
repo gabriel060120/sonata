@@ -59,12 +59,13 @@ void Engine::init() {
     stateIndicator.setScale(Vector2f(1.f, 1.f));
     stateIndicator.setPosition(Vector2f((window->getSize().x - stateIndicator.getGlobalBounds().width)/ 2, 200));
 
-
     //texture
     floor.setSize(Vector2f(this->window->getSize().x, heightFloor));
     floor.setFillColor(Color::Yellow);
     floor.setPosition(0.f, this->window->getSize().y - heightFloor);
 
+    //scene
+    scene = std::make_unique<Scene>(window.get());
 }
 
 void Engine::update() {
@@ -133,7 +134,8 @@ void Engine::update() {
 
         //draw
         // window->draw(backgroundSprite);
-        window->draw(floor);
+        scene->render();
+        // window->draw(floor);
         window->draw(fpsIndicator);
         window->draw(stateIndicator);
         if(enemies[0].getLife() > 0)

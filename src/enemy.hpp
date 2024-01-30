@@ -8,12 +8,17 @@ using namespace sf;
 class Enemy{
     private:
         RenderWindow* window;
-        Texture texture;
         Player * player;
         std::unique_ptr<LifeBar> lifeBar;
 
+        enum SpriteAnim {
+            Idle,
+            Moviment,
+            PreparingAttack,
+            Attack    
+        };
+
         //game timers
-        float frame;
         float gameClock;
 
         //moviment
@@ -25,6 +30,19 @@ class Enemy{
         float timePreparingAttack;
         float timeAttack;
         float timerAction;
+
+        // animation
+        std::vector<sf::Texture> textures;
+        SpriteAnim animStatus;
+        std::vector<int> framesMax;
+        std::vector<std::vector<int>> spriteWidth;
+        std::vector<int> spriteHeight;
+        std::vector<float> frameTime;
+        void setAnimData();
+        float frame;
+        int previousFrame;
+        int previousSpriteWidth;
+        float finalPosition;
 
         // actions control
         bool allowedAction;
@@ -42,19 +60,23 @@ class Enemy{
         bool toTakingDamage;
         bool stateChanged;
         int state;
+        int previousState;
         int gameStatus;
 
         int groundPosition;
         FloatRect rect;
+        
     public:
-        // Sprite sprite;
-        RectangleShape sprite;
+        Sprite sprite;
 
         Enemy(RenderWindow* renderWindow, int groundLocalization, Player * player);
 
+        void init();
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock, bool allowedAction);
         void update(float clock, bool allowedAction, bool inIntervalAllowedAction, int gameStatus);
+        
+        void animation();
         
         //actions
         void idle();
