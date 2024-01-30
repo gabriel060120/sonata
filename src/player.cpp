@@ -120,19 +120,19 @@ void Player::actions() {
     }
     if(timerActionTransition >= actiontransitionTime) {
         timerActionTransition = 0;
-        if(actionIndex == 1 || actionIndex == 2) {
-            switch (hitTrigger) {
-                case true:
-                    shortSleepingAction = true;
-                    longSleepingAction = false;
-                    break;
-                case false:
-                    shortSleepingAction = false;
-                    longSleepingAction = true;
-                    break;
+        // if(actionIndex == 1 || actionIndex == 2) {
+        //     switch (hitTrigger) {
+        //         case true:
+        //             shortSleepingAction = true;
+        //             longSleepingAction = false;
+        //             break;
+        //         case false:
+        //             shortSleepingAction = false;
+        //             longSleepingAction = true;
+        //             break;
 
-            } 
-        }
+        //     } 
+        // }
     }
     if(timerActionTransition == 0) {
         hitTrigger = false;
