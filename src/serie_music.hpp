@@ -15,4 +15,5 @@ class SerieMusic {
         std::vector<float> getTriggers();
         std::string getPathMusic();
         int getBpm();
-}
+};
+
