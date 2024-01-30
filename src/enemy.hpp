@@ -6,6 +6,31 @@
 using namespace sf;
 
 class Enemy{
+    public:
+        // Sprite sprite;
+        RectangleShape sprite;
+
+        Enemy();
+
+        void setPosition(sf::Vector2f position);
+        void updateGameTime(float clock, bool allowedAction);
+        // void init(RenderWindow* renderWindow, int groundLocalization, Player * player);
+        void update(float clock, bool allowedAction, bool inIntervalAllowedAction, int gameStatus);
+        
+        //actions
+        void idle();
+        void moviment();
+        void preparingAttack();
+        void attack();
+        //reactions
+        void takeDamage();
+        //getters
+        int getLife();
+        int getState();
+        //render
+        void render();
+
+
     private:
         RenderWindow* window;
         Texture texture;
@@ -46,26 +71,4 @@ class Enemy{
 
         int groundPosition;
         FloatRect rect;
-    public:
-        // Sprite sprite;
-        RectangleShape sprite;
-
-        Enemy(RenderWindow* renderWindow, int groundLocalization, Player * player);
-
-        void setPosition(sf::Vector2f position);
-        void updateGameTime(float clock, bool allowedAction);
-        void update(float clock, bool allowedAction, bool inIntervalAllowedAction, int gameStatus);
-        
-        //actions
-        void idle();
-        void moviment();
-        void preparingAttack();
-        void attack();
-        //reactions
-        void takeDamage();
-        //getters
-        int getLife();
-        int getState();
-        //render object
-        void render();
 };
