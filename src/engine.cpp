@@ -203,7 +203,16 @@ void Engine::statusControl() {
             firstChangeStatus = false;
         }
         if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
-            serieMusic.stop();
+            seriePosition++;
+
+            if(seriePosition < series.size()) {
+                serieMusic.stop();
+                serieMusic.openFromFile(series[seriePosition].getPathMusic());
+                triggerIndex = 0;
+                repeatBase();
+                status = State::Presentation;
+            } else {}
+
             // window->close();
         }
     }
@@ -238,7 +247,9 @@ void Engine::getNextTimeAction() {
 //=================================================================================================================================
 
 void Engine::setMusics() {
-    series.push_back(SerieMusic("../audio/soundtracks/serie_1-1_100bpm.wav",{1,1,1,-1,1,0.5,0.5,1,-1,0.5,0.5,1,1,-1,0.5,0.5,0.5,0.5,0.5}, 100));
+    series.push_back(SerieMusic("../audio/soundtracks/serie_1-1_100bpm.wav",{1,1,1,-1,1,0.5,0.5,1,-1,0.5,0.5,1,1,-1,0.5,0.5,0.5,0.5,0.5,-1.5}, 100));
+    series.push_back(SerieMusic("../audio/soundtracks/serie_1-2_100bpm.wav",{0.5,0.5,0.5,0.5,1,0.5,-0.5,1,0.5,0.5,0.5,0.5,0.5,-0.5,0.5,0.5,1,1,0.5,-0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,-0.5}, 100));
+    series.push_back(SerieMusic("../audio/soundtracks/serie_1-3_100bpm.wav",{1,0.5,0.5,1,0.5,-0.5,2,0.5,0.5,0.5,-0.5,1,0.5,0.5,1,0.5,-0.5,2,0.5,0.5,0.5,-0.5}, 100));
 }
 
 void Engine::setStatus(State newStatus) {
