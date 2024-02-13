@@ -31,7 +31,7 @@ void Engine::init() {
 
     //sound effects
     if(!metronome.loadFromFile("./../audio/sound_effects/metronome.wav")){
-        std::cout << std::endl << "Nao foi possivel carregar metronomo";
+        // std::cout << std::endl << "Nao foi possivel carregar metronomo";
     }
     soundMetronome.setBuffer(metronome);
 
@@ -106,14 +106,14 @@ void Engine::update() {
                 // soundMetronome.play();
             }
             if((timerToAction >= (actionInterval - intervalAllowed)) && !inIntervalAllowed) {
-                std::cout << "================> inicio intervalo<================" << std::endl;
+                // std::cout << "================> inicio intervalo<================" << std::endl;
                 inIntervalAllowed = true;
             }
             if(intervalAllowedTimer >= intervalAllowed) {
                 inIntervalAllowed = false;
                 initAllowedTimer= false;
                 intervalAllowedTimer = 0.f;
-                std::cout << "================> fim intervalo<================" << std::endl;
+                // std::cout << "================> fim intervalo<================" << std::endl;
             }
         }
         sf::Event event;
@@ -150,7 +150,7 @@ void Engine::statusControl() {
     if(status == State::Preparing) {
         if(firstChangeStatus) {
             repeatBase();
-            std::cout << "================> Preparando <================" << std::endl;
+            // std::cout << "================> Preparando <================" << std::endl;
             firstChangeStatus = false;
             stateIndicator.setString("Preparando");
             stateIndicator.setPosition(Vector2f((window->getSize().x - stateIndicator.getGlobalBounds().width)/ 2, 200));
@@ -165,7 +165,7 @@ void Engine::statusControl() {
     }
     else if(status == State::Presentation) {
         if(firstChangeStatus) {
-            std::cout << "================> Apresentacao <================" << std::endl;
+            // std::cout << "================> Apresentacao <================" << std::endl;
             repeatBase();
             serieMusic.play();
             stateIndicator.setString("Apresentacao");
@@ -180,7 +180,7 @@ void Engine::statusControl() {
     }
     else if(status == State::EnemyTurn) {
         if(firstChangeStatus) {
-            std::cout << "================> Turno Inimigo <================" << std::endl;
+            // std::cout << "================> Turno Inimigo <================" << std::endl;
             repeatBase();
             serieMusic.play();
             stateIndicator.setString("Turno Inimigo");
@@ -195,13 +195,15 @@ void Engine::statusControl() {
     }
     else if(status == State::PlayerTurn) {
         if(firstChangeStatus) {
-            std::cout << "================> Turno Player <================" << std::endl;
+            // std::cout << "================> Turno Player <================" << std::endl;
             repeatBase();
             serieMusic.play();
             stateIndicator.setString("Seu Turno");
             stateIndicator.setPosition(Vector2f((window->getSize().x - stateIndicator.getGlobalBounds().width)/ 2, 200));
+            enemies[0].setState(1);
             firstChangeStatus = false;
         }
+        if(intervalAllowed)
         if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
             seriePosition++;
 
@@ -209,7 +211,7 @@ void Engine::statusControl() {
                 serieMusic.stop();
                 serieMusic.openFromFile(series[seriePosition].getPathMusic());
                 triggerIndex = 0;
-                repeatBase();
+                // repeatBase();
                 status = State::Presentation;
             } else {}
 
@@ -232,7 +234,7 @@ void Engine::getNextTimeAction() {
             triggerIndex++;
             allowedAction = true;
             initAllowedTimer = true;
-            std::cout << "================> gatilho <================" << std::endl;
+            // std::cout << "================> gatilho <================" << std::endl;
         } else {
             actionInterval = -series[seriePosition].getTriggers()[triggerIndex] * baseUnitTime;
             triggerIndex++;

@@ -13,6 +13,11 @@ const float FRAME_VELOCITY = 5;
 Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player) {
     this->window = renderWindow;
     this->player = player;
+    this->groundPosition = groundLocalization;
+    init();
+}
+
+void Enemy::init() {
     // texture.loadFromFile(ENEMY_TEXTURE);
     // sprite.setTexture(texture);
     // sprite.setTexture(texture);
@@ -44,18 +49,16 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
     toTakingDamage = false;
     state = -1;
 
-    this->groundPosition = groundLocalization - sprite.getGlobalBounds().height;
     // sprite.setTextureRect(IntRect(0, groundPosition, ENEMY_SPRITE_WIDHT, ENEMY_SPRITE_HEIGHT));
+    groundPosition -= sprite.getGlobalBounds().height;
     setPosition(Vector2f(window->getSize().x, groundPosition));
-
-
 }
 
 void Enemy::updateGameTime(float clock, bool allowedAction) {
     this->gameClock = clock;
     this->allowedAction = allowedAction;
     //  if(allowedAction)
-        // std::cout <<"\x1B[31mInimigo: acao habilitada" << std::endl;
+        // // std::cout <<"\x1B[31mInimigo: acao habilitada" << std::endl;
 
 }
 
@@ -143,7 +146,7 @@ void Enemy::preparingAttack() {
     timerAction += gameClock;
 
     if(allowedAction){
-        std::cout <<"\x1B[31mInimigo: preparando ataque" << std::endl;
+        // std::cout <<"\x1B[31mInimigo: preparando ataque" << std::endl;
         inPreparingAttack = true;
         stateChanged = true;
         sprite.setFillColor(Color(255,165,0));
@@ -158,7 +161,7 @@ void Enemy::preparingAttack() {
 
 void Enemy::attack() {
     if(allowedAction){
-        std::cout <<"\x1B[31mInimigo: atacando" << std::endl;
+        // std::cout <<"\x1B[31mInimigo: atacando" << std::endl;
         inAttacking = true;
         stateChanged = true;
         sprite.setFillColor(Color::Red);
@@ -173,9 +176,9 @@ void Enemy::attack() {
 }
 
 void Enemy::idle() {
-    if(allowedAction && gameStatus == 2){
+    if(allowedAction){
         sprite.setFillColor(Color(128,128,128));
-        std::cout <<"\x1B[31mInimigo: parado" << std::endl;
+        // std::cout <<"\x1B[31mInimigo: parado" << std::endl;
         inIdle = true;
         stateChanged = true;
     } 
@@ -199,7 +202,7 @@ void Enemy::takeDamage() {
     ) {
         inTakingDamage = true;
         lifeBar->takeDamage(1);
-        std::cout << "\x1B[31mInimigo: recebeu dano" << std::endl;
+        // std::cout << "\x1B[31mInimigo: recebeu dano" << std::endl;
     } else {
         inTakingDamage = false;
     }
@@ -215,4 +218,12 @@ int Enemy::getLife() {
 
 int Enemy::getState() {
     return state;
+}
+
+//=================================================================================================================================
+//||---------------------------------------------------- setters ----------------------------------------------------------------||
+//=================================================================================================================================
+
+void Enemy::setState(int newState) {
+    this->state = state; 
 }

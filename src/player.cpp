@@ -13,6 +13,11 @@ const float FRAME_VELOCITY = 5;
 Player::Player(RenderWindow* renderWindow, int groundLocalization) {
     //game
     window = renderWindow;
+    this->groundPosition = groundLocalization;
+    init();
+}
+
+void Player::init() {
     // texture.loadFromFile(PLAYER_TEXTURE);
     // sprite.setTexture(texture);
     // sprite.setTexture(texture);
@@ -20,7 +25,7 @@ Player::Player(RenderWindow* renderWindow, int groundLocalization) {
     //player components
     sprite.setSize(Vector2f(100.f, 100.f));
     sprite.setFillColor(Color::White);
-    this->groundPosition = groundLocalization - sprite.getGlobalBounds().height;
+    groundPosition -= sprite.getGlobalBounds().height;
     // sprite.setTextureRect(IntRect(0, groundPosition, PLAYER_SPRITE_WIDHT, PLAYER_SPRITE_HEIGHT));
     setPosition(Vector2f((window->getSize().x/2) - sprite.getGlobalBounds().width - 50 , groundPosition));
 
@@ -157,7 +162,7 @@ void Player::idle() {
         sprite.setFillColor(Color::White);
 }
 void Player::block() {
-    std::cout << "\x1B[32mPlayer: bloqueando" << std::endl; 
+    // std::cout << "\x1B[32mPlayer: bloqueando" << std::endl; 
     actionIndex = 1;
     actiontransitionTime = 0.15;
     if(sprite.getFillColor() != Color::Blue) {
@@ -172,7 +177,7 @@ void Player::block() {
     }
 }
 void Player::attack() {
-    std::cout << "\x1B[32mPlayer: atacando" << std::endl; 
+    // std::cout << "\x1B[32mPlayer: atacando" << std::endl; 
     actionIndex = 2;
     actiontransitionTime = 0.15;
     if(sprite.getFillColor() != Color::Red) {
@@ -188,7 +193,7 @@ void Player::attack() {
 }
 
 void Player::longSleep() {
-    std::cout << "\x1B[32mPlayer: pausa longa" << std::endl; 
+    // std::cout << "\x1B[32mPlayer: pausa longa" << std::endl; 
     actiontransitionTime = 1.0f;
     actionIndex = 3;
     longSleepingAction = false;
@@ -197,7 +202,7 @@ void Player::longSleep() {
 }
 
 void Player::shortSleep() {
-    std::cout << "\x1B[32mPlayer: pausa curta" << std::endl; 
+    // std::cout << "\x1B[32mPlayer: pausa curta" << std::endl; 
     actiontransitionTime = 0.05;
     actionIndex = 4;
     shortSleepingAction = false;

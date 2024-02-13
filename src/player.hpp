@@ -16,6 +16,7 @@ class Player {
 
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock, bool triggerAction);
+        void init();
         void update(float clock, bool triggerAction, bool inTriggerAction, int gameStatus);
         // void::init(RenderWindow* renderWindow, int groundLocalization);
         //actions

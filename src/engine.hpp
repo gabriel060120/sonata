@@ -45,6 +45,7 @@ class Engine {
         int groundLocalization;
         State status;
         bool firstChangeStatus;
+        bool repeatCompass;
         void statusControl();
         void getNextTimeAction();
         //living elements
