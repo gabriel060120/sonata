@@ -29,7 +29,7 @@ void Player::init() {
     // sprite.setTextureRect(IntRect(0, groundPosition, PLAYER_SPRITE_WIDHT, PLAYER_SPRITE_HEIGHT));
     setPosition(Vector2f((window->getSize().x/2) - sprite.getGlobalBounds().width - 50 , groundPosition));
 
-    lifeBar = std::make_unique<LifeBar>(window, Vector2f(60.f, 30.f), 5, Vector2f(30, 50), Color::Green, Color(128,128,128));
+    lifeBar = std::make_unique<LifeBar>(window, Vector2f(60.f, 30.f), 6, Vector2f(30, 50), Color::Green, Color(128,128,128));
 
     attackBox.setSize(Vector2f(sprite.getGlobalBounds().width, sprite.getGlobalBounds().height));
     attackBox.setFillColor(Color(255,0,0,128));
@@ -262,4 +262,8 @@ bool Player::inAttacking() {
 }
 bool Player::inBlocking() {
     return blockingAction;
+}
+
+int Player::getLife() {
+    return lifeBar->getLife();
 }

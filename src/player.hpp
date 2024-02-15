@@ -31,6 +31,7 @@ class Player {
         RectangleShape getAttackBox();
         bool inAttacking();
         bool inBlocking();
+        int getLife();
         //reactions
         void takeDamage(int valueDamage);
 

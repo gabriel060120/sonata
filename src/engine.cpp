@@ -126,6 +126,9 @@ void Engine::update() {
         }
         //updates
         player->update(timeClock, allowedAction, inIntervalAllowed, status);
+        if(player->getLife() <= 0) {
+            init();
+        }
         if(enemies[0].getLife() > 0)
             enemies[0].update(timeClock, allowedAction, inIntervalAllowed, status);
         
@@ -207,7 +210,7 @@ void Engine::statusControl() {
         if(!(serieMusic.getStatus() == sf::Music::Playing) || (serieMusic.getPlayingOffset() >= serieMusic.getDuration())) {
             seriePosition++;
 
-            if(seriePosition < series.size()) {
+            if(seriePosition < ((int)series.size())) {
                 serieMusic.stop();
                 serieMusic.openFromFile(series[seriePosition].getPathMusic());
                 triggerIndex = 0;

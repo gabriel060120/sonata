@@ -1,4 +1,4 @@
-#ifndef LIFE_BAR_HPP
+#pragma once
 #define LIFE_BAR_HPP
 #include <SFML/Graphics.hpp>
 #include <memory>
@@ -30,5 +30,3 @@ class LifeBar {
         //render object
         void render();
 };
-
-#endif 
