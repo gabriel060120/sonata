@@ -9,6 +9,7 @@
 #include "player.hpp"
 #include "enemy.hpp"
 #include "serie_music.hpp"
+#include "finish_page.hpp"
 
 using namespace sf;
 
@@ -28,6 +29,8 @@ class Engine {
     private:
         //engine controller
         std::shared_ptr<sf::RenderWindow> window;
+        std::unique_ptr<FinishPage> finishPage;
+        bool finishGame;
         int fpsCounter;
         float timerUpdateFps;
         float heightFloor;

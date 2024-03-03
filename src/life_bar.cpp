@@ -16,6 +16,10 @@ LifeBar::LifeBar(RenderWindow* renderWindow, Vector2f size, int max, Vector2f po
     this->lostLifeColor = lostLifeColor;    
 }
 
+void LifeBar::refresh() {
+    life = max;
+}
+
 void LifeBar::setPosition(Vector2f position) {
     this->position = position;
 }

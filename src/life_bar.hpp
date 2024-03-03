@@ -17,6 +17,7 @@ class LifeBar {
 
         LifeBar(RenderWindow* renderWindow, Vector2f size, int max, Vector2f position, Color remainderLifeColor, Color lostLifeColor);
 
+        void refresh();
         void setPosition(sf::Vector2f position);
         // void updateGameTime(float clock, bool allowedAction);
         // void update(float clock, bool allowedAction);

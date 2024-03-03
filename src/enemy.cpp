@@ -30,7 +30,7 @@ void Enemy::init() {
     dx = 0;
     dy = 0;
     attackDistance = 50;
-    lifeBar = std::make_unique<LifeBar>(window, Vector2f(5.f, 10.f), 20, Vector2f(sprite.getPosition().x, sprite.getPosition().y - 30), Color::Red, Color(128,128,128));
+    lifeBar = std::make_unique<LifeBar>(window, Vector2f(1.f, 10.f), 100, Vector2f(sprite.getPosition().x, sprite.getPosition().y - 30), Color::Red, Color(128,128,128));
 
     //action timers
     timePreparingAttack = 1.f;

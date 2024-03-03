@@ -4,12 +4,13 @@
 #include "engine.hpp"
 #include "enemy.hpp"
 #include "player.hpp"
+#include "finish_page.hpp"
 
 void Engine::init() {
     window = std::make_shared<sf::RenderWindow>(sf::VideoMode(1280, 720),"SONATA v0.1", sf:: Style::Titlebar | sf::Style::Close);
     window->setPosition(Vector2i(80,0));
     window->setFramerateLimit(240);
-    
+    finishPage = std::make_unique<FinishPage>(window.get());
     // //engine controller
     fpsCounter = 0;
     heightFloor = 100.f;
@@ -70,7 +71,19 @@ void Engine::init() {
 void Engine::update() {
     while(window->isOpen())
     {
-        //Game Status
+        sf::Event event;
+        while(window->pollEvent(event))
+        {
+            if(event.type == sf::Event::Closed)
+            {
+                window->close();
+            }
+        }
+        if(finishGame) {
+            finishPage->verifyInput();
+            finishPage->render();
+        } else {
+            //Game Status
         statusControl();
         allowedAction = false;
         timeClock = gameClock.getElapsedTime().asSeconds();
@@ -79,6 +92,11 @@ void Engine::update() {
         timerUpdateFps += timeClock;
         fpsCounter = (1/timeClock) + 1;
 
+        if(player->getLife() == 0) {
+            finishGame = true;
+            finishPage->init(false);
+        }
+        
         if(initAllowedTimer) {
             intervalAllowedTimer += timeClock;
         }
@@ -116,19 +134,9 @@ void Engine::update() {
                 // std::cout << "================> fim intervalo<================" << std::endl;
             }
         }
-        sf::Event event;
-        while(window->pollEvent(event))
-        {
-            if(event.type == sf::Event::Closed)
-            {
-                window->close();
-            }
-        }
+
         //updates
         player->update(timeClock, allowedAction, inIntervalAllowed, status);
-        if(player->getLife() <= 0) {
-            init();
-        }
         if(enemies[0].getLife() > 0)
             enemies[0].update(timeClock, allowedAction, inIntervalAllowed, status);
         
@@ -145,6 +153,7 @@ void Engine::update() {
             // enemies.clear();
         player->render();
         window->display();
+        }
     }
     
 }
@@ -216,6 +225,7 @@ void Engine::statusControl() {
                 triggerIndex = 0;
                 // repeatBase();
                 status = State::Presentation;
+                firstChangeStatus = true;
             } else {}
 
             // window->close();

@@ -9,9 +9,11 @@ class FinishPage {
         sf::Font font;
         sf::Text title;
         sf::Text description;
+        bool isRendering;
     
     public:
-        FinishPage(sf::RenderWindow* window, bool isWon);
+        FinishPage(sf::RenderWindow* window);
+        void init(bool isWon);
         void render();
         bool verifyInput();
 };
