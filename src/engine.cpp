@@ -6,6 +6,8 @@
 #include "player.hpp"
 #include "finish_page.hpp"
 
+
+
 void Engine::init() {
     window = std::make_shared<sf::RenderWindow>(sf::VideoMode(1280, 720),"SONATA v0.1", sf:: Style::Titlebar | sf::Style::Close);
     window->setPosition(Vector2i(80,0));
@@ -80,7 +82,9 @@ void Engine::update() {
             }
         }
         if(finishGame) {
-            finishPage->verifyInput();
+            if(finishPage->verifyInput()) {
+                init();
+            }
             finishPage->render();
         } else {
             //Game Status
@@ -95,6 +99,9 @@ void Engine::update() {
         if(player->getLife() == 0) {
             finishGame = true;
             finishPage->init(false);
+            pad.stop();
+            base1.stop();
+            serieMusic.stop();
         }
         
         if(initAllowedTimer) {

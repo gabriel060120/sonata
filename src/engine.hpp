@@ -73,9 +73,4 @@ class Engine {
         // Texture floorTexture;
         RectangleShape floor;
 
-
-
-
-
-    
 };
