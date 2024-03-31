@@ -6,14 +6,13 @@
 #include "player.hpp"
 #include "finish_page.hpp"
 
-
-
 void Engine::init() {
     window = std::make_shared<sf::RenderWindow>(sf::VideoMode(1280, 720),"SONATA v0.1", sf:: Style::Titlebar | sf::Style::Close);
     window->setPosition(Vector2i(80,0));
     window->setFramerateLimit(240);
     finishPage = std::make_unique<FinishPage>(window.get());
-    // //engine controller
+    
+    //engine controller
     fpsCounter = 0;
     heightFloor = 100.f;
     timeClock = 0.f;
@@ -24,6 +23,7 @@ void Engine::init() {
     inIntervalAllowed = false;
     intervalAllowedTimer = 0.f;
     initAllowedTimer = false;
+    finishGame = false;
     groundLocalization = window->getSize().y - heightFloor;
     status = State::Preparing;
     firstChangeStatus = true;
@@ -70,6 +70,44 @@ void Engine::init() {
 
 }
 
+void Engine::restart() {
+
+    //engine controller
+    fpsCounter = 0;
+    timeClock = 0.f;
+    timerToAction = 0.f;
+    triggerIndex = 0;
+    allowedAction = false;
+    inIntervalAllowed = false;
+    finishGame = false;
+    intervalAllowedTimer = 0.f;
+    initAllowedTimer = false;
+    groundLocalization = window->getSize().y - heightFloor;
+    status = State::Preparing;
+    firstChangeStatus = true;
+
+    //living elements
+    player->restart();
+    enemies[0].restart();
+
+    //music
+    setMusics();
+    seriePosition = 0;
+    serieMusic.openFromFile(series[seriePosition].getPathMusic());
+    baseUnitTime = 60.f/series[seriePosition].getBpm();
+    actionInterval = 0;
+
+    //FPS
+    fpsIndicator.setFont(font);
+    fpsIndicator.setString(std::to_string(fpsCounter) + "FPS");
+    fpsIndicator.setPosition(Vector2f(this->window->getSize().x - 150, 0));
+    fpsIndicator.setScale(Vector2f(0.5f, 0.5f));
+    //Turn Indicator
+    stateIndicator.setString("Preparando");
+    stateIndicator.setPosition(Vector2f((window->getSize().x - stateIndicator.getGlobalBounds().width)/ 2, 200));
+
+}
+
 void Engine::update() {
     while(window->isOpen())
     {
@@ -83,7 +121,8 @@ void Engine::update() {
         }
         if(finishGame) {
             if(finishPage->verifyInput()) {
-                init();
+                restart();
+                std::cout << "RECOMEÇO" << std::endl;
             }
             finishPage->render();
         } else {
@@ -233,7 +272,10 @@ void Engine::statusControl() {
                 // repeatBase();
                 status = State::Presentation;
                 firstChangeStatus = true;
-            } else {}
+            } else {
+                finishGame = true;
+                finishPage->init(true);
+            }
 
             // window->close();
         }

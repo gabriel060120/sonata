@@ -22,6 +22,7 @@ class Engine {
             PlayerTurn    
         };
         void init();
+        void restart();
         void update();
         //setters
         void setStatus(State newStatus);

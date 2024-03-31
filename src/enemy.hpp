@@ -55,6 +55,7 @@ class Enemy{
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock, bool allowedAction);
         void init();
+        void restart();
         void update(float clock, bool allowedAction, bool inIntervalAllowedAction, int gameStatus);
         
         //actions

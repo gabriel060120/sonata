@@ -70,6 +70,31 @@ void Player::init() {
     errorSound.setBuffer(errorSoundBuffer);
 }
 
+void Player::restart() {
+    //player components
+    sprite.setFillColor(Color::White);
+
+    lifeBar->refresh();
+
+    // game controller
+    frame = 0.f;
+    gameTime = 0.0f;
+    movimentSpeed = 300.f;
+    dx = 0;
+    dy = 0;
+
+    //actions controller
+    actionIndex = 0;
+    timerActionTransition = 0.f;
+    actiontransitionTime = 0.25;
+    attackingAction = false;
+    blockingAction = false;
+    longSleepingAction = false;
+    shortSleepingAction = false;
+    hitTrigger = false;
+
+}
+
 void Player::updateGameTime(float clock, bool triggerAction) {
     gameTime = clock;
     this->triggerAction = triggerAction;

@@ -14,6 +14,7 @@ class Player {
 
         Player(RenderWindow* renderWindow, int groundLocalization);
 
+        void restart();
         void setPosition(sf::Vector2f position);
         void updateGameTime(float clock, bool triggerAction);
         void init();
