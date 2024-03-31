@@ -54,17 +54,14 @@ class Engine {
         void getNextTimeAction();
         //living elements
         std::shared_ptr<Player> player;
-        std::vector<Enemy> enemies;
-        //sound effects
-        sf::SoundBuffer metronome;
-        sf::Sound soundMetronome;
+        std::shared_ptr<Enemy> enemy;
         //music
         sf::Music pad;
         sf::Music base1;
         std::vector<SerieMusic> series;
         sf::Music serieMusic;
         int seriePosition;
-        void setMusics();
+        void addMusics();
         void repeatBase();
         //text
         sf::Font font;
@@ -73,5 +70,4 @@ class Engine {
         //texture
         // Texture floorTexture;
         RectangleShape floor;
-
 };

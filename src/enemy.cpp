@@ -5,9 +5,6 @@
 
 using namespace sf;
 
-// const String ENEMY_TEXTURE = "./assets/sprites/Enemy/idle.png";
-const int ENEMY_SPRITE_WIDHT = 50;
-const int ENEMY_SPRITE_HEIGHT = 37;
 const float FRAME_VELOCITY = 5;
 
 Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player) {
@@ -18,7 +15,7 @@ Enemy::Enemy(RenderWindow* renderWindow, int groundLocalization, Player *player)
 }
 
 void Enemy::init() {
-    sprite.setSize(Vector2f(100.f, 100.f));
+    sprite.setSize(Vector2f(window->getSize().y * 0.13, window->getSize().y * 0.13));
     sprite.setFillColor(Color(128,128,128));
     frame = 0.f;
     //timers
@@ -27,7 +24,7 @@ void Enemy::init() {
     dx = 0;
     dy = 0;
     attackDistance = 50;
-    lifeBar = std::make_unique<LifeBar>(window, Vector2f(1.f, 10.f), 100, Vector2f(sprite.getPosition().x, sprite.getPosition().y - 30), Color::Red, Color(128,128,128));
+    lifeBar = std::make_unique<LifeBar>(window, Vector2f((window->getSize().y *0.13) / 100, 10.f), 100, Vector2f(sprite.getPosition().x, sprite.getPosition().y - 30), Color::Red, Color(128,128,128));
 
     //action timers
     timePreparingAttack = 1.f;

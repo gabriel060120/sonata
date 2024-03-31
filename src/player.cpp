@@ -5,7 +5,6 @@
 
 using namespace sf;
 
-// const String PLAYER_TEXTURE = "./assets/sprites/player/idle.png";
 const int PLAYER_SPRITE_WIDHT = 50;
 const int PLAYER_SPRITE_HEIGHT = 37;
 const float FRAME_VELOCITY = 5;
@@ -18,18 +17,13 @@ Player::Player(RenderWindow* renderWindow, int groundLocalization) {
 }
 
 void Player::init() {
-    // texture.loadFromFile(PLAYER_TEXTURE);
-    // sprite.setTexture(texture);
-    // sprite.setTexture(texture);
-
     //player components
-    sprite.setSize(Vector2f(100.f, 100.f));
+    sprite.setSize(Vector2f(window->getSize().y * 0.13, window->getSize().y * 0.13));
     sprite.setFillColor(Color::White);
     groundPosition -= sprite.getGlobalBounds().height;
-    // sprite.setTextureRect(IntRect(0, groundPosition, PLAYER_SPRITE_WIDHT, PLAYER_SPRITE_HEIGHT));
-    setPosition(Vector2f((window->getSize().x/2) - sprite.getGlobalBounds().width - 50 , groundPosition));
+    setPosition(Vector2f((window->getSize().x/2) - sprite.getGlobalBounds().width - 25 , groundPosition));
 
-    lifeBar = std::make_unique<LifeBar>(window, Vector2f(30.f, 30.f), 10, Vector2f(30, 50), Color::Green, Color(128,128,128));
+    lifeBar = std::make_unique<LifeBar>(window, Vector2f(window->getSize().x * 0.023, 30.f), 10, Vector2f(30, 50), Color::Green, Color(128,128,128));
 
     attackBox.setSize(Vector2f(sprite.getGlobalBounds().width, sprite.getGlobalBounds().height));
     attackBox.setFillColor(Color(255,0,0,128));
@@ -150,19 +144,6 @@ void Player::actions() {
     }
     if(timerActionTransition >= actiontransitionTime) {
         timerActionTransition = 0;
-        // if(actionIndex == 1 || actionIndex == 2) {
-        //     switch (hitTrigger) {
-        //         case true:
-        //             shortSleepingAction = true;
-        //             longSleepingAction = false;
-        //             break;
-        //         case false:
-        //             shortSleepingAction = false;
-        //             longSleepingAction = true;
-        //             break;
-
-        //     } 
-        // }
     }
     if(timerActionTransition == 0) {
         hitTrigger = false;
@@ -187,7 +168,6 @@ void Player::idle() {
         sprite.setFillColor(Color::White);
 }
 void Player::block() {
-    // std::cout << "\x1B[32mPlayer: bloqueando" << std::endl; 
     actionIndex = 1;
     actiontransitionTime = 0.15;
     if(sprite.getFillColor() != Color::Blue) {
@@ -202,7 +182,6 @@ void Player::block() {
     }
 }
 void Player::attack() {
-    // std::cout << "\x1B[32mPlayer: atacando" << std::endl; 
     actionIndex = 2;
     actiontransitionTime = 0.15;
     if(sprite.getFillColor() != Color::Red) {
@@ -218,7 +197,6 @@ void Player::attack() {
 }
 
 void Player::longSleep() {
-    // std::cout << "\x1B[32mPlayer: pausa longa" << std::endl; 
     actiontransitionTime = 1.0f;
     actionIndex = 3;
     longSleepingAction = false;
@@ -227,42 +205,12 @@ void Player::longSleep() {
 }
 
 void Player::shortSleep() {
-    // std::cout << "\x1B[32mPlayer: pausa curta" << std::endl; 
     actiontransitionTime = 0.05;
     actionIndex = 4;
     shortSleepingAction = false;
     if(sprite.getFillColor() != Color(123,104,238)) 
         sprite.setFillColor(Color(123,104,238));
 }
-
-// void Player::moviment() {
-//     inMoviment = true;
-
-//     if(Keyboard::isKeyPressed(Keyboard::Right)) {
-//         dx = movimentSpeed;
-//         // sprite.move(movimentSpeed * gameTime, 0.f);
-        
-//         frame += FRAME_VELOCITY * gameTime;
-//         if(frame > 3) {
-//             frame -= 3;
-//         }
-//         // sprite.setTextureRect(IntRect(PLAYER_SPRITE_WIDHT * (int) frame, 0, PLAYER_SPRITE_WIDHT,PLAYER_SPRITE_HEIGHT));
-//     } else if(Keyboard::isKeyPressed(Keyboard::Left)) {
-//         dx = -movimentSpeed;
-//         // sprite.move(-movimentSpeed * gameTime, 0.f);
-//         frame += FRAME_VELOCITY * gameTime;
-//         if(frame > 3) {
-//             frame -= 3;
-//         }
-//         // sprite.setTextureRect(IntRect(PLAYER_SPRITE_WIDHT * (int) frame + PLAYER_SPRITE_WIDHT, 0, -PLAYER_SPRITE_WIDHT,PLAYER_SPRITE_HEIGHT));
-//     } else {
-//         dx = 0;
-//         inMoviment = false;
-//     }
-
-    
-//     sprite.move(dx * gameTime, 0.f);
-// }
 
 //=================================================================================================================================
 //||--------------------------------------------------- reactions ---------------------------------------------------------------||
