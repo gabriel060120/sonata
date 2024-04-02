@@ -251,6 +251,8 @@ void Engine::statusControl() {
                 status = State::Presentation;
                 firstChangeStatus = true;
             } else {
+                pad.stop();
+                base1.stop();
                 finishGame = true;
                 finishPage->init(true);
             }

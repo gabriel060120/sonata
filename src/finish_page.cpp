@@ -13,8 +13,8 @@ FinishPage::FinishPage(sf::RenderWindow* window) {
 void FinishPage::init(bool isWon) {
     this->isWon = isWon;
     
-    std::string titleText = isWon ? "Obrigado por Jogar!!!" : "Voce Morreu!";  
-    std::string descriptionText = isWon ? "Pressione Espaco para sair" : "Pressione Espaco para tentar novamente";
+    std::string titleText = isWon ? "Obrigado por Jogar!!!" : "Fim de Jogo!";  
+    std::string descriptionText = isWon ? "Pressione espaco para sair" : "Pressione espaco para tentar novamente";
     
     title.setString(titleText);
     title.setFillColor(isWon ? sf::Color::White : sf::Color::Red);
